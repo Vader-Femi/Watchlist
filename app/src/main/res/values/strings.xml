@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Watchlist</string>
+    <string name="search_query_empty_error">You have to type something na</string>
 </resources>

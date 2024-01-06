@@ -1,9 +1,16 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
 }
+
+val localPropertiesFile = rootProject.file("local.properties")
+val localProperties =  Properties()
+localProperties.load(FileInputStream(localPropertiesFile))
 
 android {
     namespace = "com.company.watchlist"
@@ -15,6 +22,9 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
+
+        buildConfigField ("String", "TMDB_API_KEY", localProperties.getProperty("TMDB_API_KEY") ) // localProperties['TMDB_API_KEY']  "\"${properties.getProperty('WEB_CLIENT_ID')}\""
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -70,7 +80,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    // Compose dependencies
+    //Lifecycle Compose dependencies
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
     implementation("androidx.navigation:navigation-compose:2.7.6")
@@ -96,19 +106,16 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
-    // Coroutine Lifecycle Scopes
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-
-    //Swipe to refresh
-    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.5.0")
-//    AsyncImage(
-//        model = "https://example.com/image.jpg",
-//        contentDescription = null,
-//    )
 
     //paging3
     implementation ("androidx.paging:paging-runtime-ktx:3.2.1")
+    implementation ("androidx.paging:paging-compose:3.2.1")
+
+    //Room
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp ("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-paging:2.6.1")
 }

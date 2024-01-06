@@ -6,16 +6,17 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitBuilder(authToken: String = "") {
+object RetrofitBuilder{
+    val BASE_URL = "https://api.themoviedb.org/"
 
     val api: TMDBApi by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://api.themoviedb.org/3/")
+        val create = Retrofit.Builder()
+            .baseUrl(BASE_URL)
             .client(OkHttpClient.Builder()
                 .addInterceptor { chain ->
                     chain.proceed(chain.request().newBuilder().also {
                         it.addHeader("accept", "application/json")
-                        it.addHeader("Authorization", "Bearer $authToken")
+//                        it.addHeader("Authorization", "Bearer $authToken")
                     }.build())
                 }.also { client ->
                     if (BuildConfig.DEBUG) {
@@ -29,5 +30,6 @@ class RetrofitBuilder(authToken: String = "") {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(TMDBApi::class.java)
+        create
     }
 }
