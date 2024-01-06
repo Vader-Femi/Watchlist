@@ -3,6 +3,7 @@ package com.company.watchlist
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -40,8 +41,8 @@ class MainActivity : ComponentActivity() {
             val trendingState by viewModel.trendingState.collectAsStateWithLifecycle()
             val searchMovieState by viewModel.searchMovieState.collectAsStateWithLifecycle()
             val searchSeriesState by viewModel.searchSeriesState.collectAsStateWithLifecycle()
-            val movieDetailState by viewModel.movieDetailState.collectAsStateWithLifecycle()
-            val seriesDetailState by viewModel.seriesDetailState.collectAsStateWithLifecycle()
+            val movieDetailsState by viewModel.movieDetailState.collectAsStateWithLifecycle()
+            val seriesDetailsState by viewModel.seriesDetailState.collectAsStateWithLifecycle()
             val watchlistState by viewModel.watchlistState.collectAsStateWithLifecycle()
 
             LaunchedEffect(key1 = true) {
@@ -83,28 +84,21 @@ class MainActivity : ComponentActivity() {
                         Box(
                             modifier = Modifier.padding(it)
                         ) {
-                            if (trendingState.isLoading || searchMovieState.isLoading ||
-                                searchSeriesState.isLoading || movieDetailState.isLoading ||
-                                seriesDetailState.isLoading || watchlistState.isLoading
+                            AnimatedVisibility(
+                                visible = trendingState.isLoading || movieDetailsState.isLoading ||
+                                        seriesDetailsState.isLoading || watchlistState.isLoading
                             ) {
                                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                             }
                             NavigationHost(
-                                trendingState,
-                                searchMovieState,
-                                searchSeriesState,
-                                movieDetailState,
-                                seriesDetailState,
-                                watchlistState,
+                                trendingState = trendingState,
+                                searchMovieState = searchMovieState,
+                                searchSeriesState = searchSeriesState,
+                                movieDetailsState = movieDetailsState,
+                                seriesDetailsState = seriesDetailsState,
+                                watchlistState = watchlistState,
                                 viewModel = viewModel,
-                                { appBarTitle ->
-                                    viewModel.onEvent(
-                                        AppBarEvent.AppbarTitleChanged(
-                                            appBarTitle
-                                        )
-                                    )
-                                },
-                                navController
+                                navController = navController
                             )
                         }
                     }

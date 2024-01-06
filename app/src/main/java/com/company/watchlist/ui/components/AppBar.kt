@@ -26,7 +26,10 @@ fun AppBar(
         navigationIcon = {
             if (title == Screen.MovieDetailsScreen.name || title == Screen.SeriesDetailsScreen.name)
                 IconButton(onClick = backArrow) {
-                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back Arrow")
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back Arrow"
+                    )
                 }
         },
         colors = TopAppBarDefaults.largeTopAppBarColors(

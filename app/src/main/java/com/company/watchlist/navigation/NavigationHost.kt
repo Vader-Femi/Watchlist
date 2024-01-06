@@ -7,11 +7,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.company.watchlist.data.Screen
+import com.company.watchlist.presentation.appbar.AppBarEvent
 import com.company.watchlist.presentation.details.movie.MovieDetailsState
 import com.company.watchlist.presentation.details.series.SeriesDetailsState
-import com.company.watchlist.presentation.search.movies.SearchMovieEvent
 import com.company.watchlist.presentation.search.movies.SearchMovieState
-import com.company.watchlist.presentation.search.series.SearchSeriesEvent
 import com.company.watchlist.presentation.search.series.SearchSeriesState
 import com.company.watchlist.presentation.trending.TrendingState
 import com.company.watchlist.presentation.watchlist.WatchlistState
@@ -31,7 +30,6 @@ fun NavigationHost(
     seriesDetailsState: SeriesDetailsState,
     watchlistState: WatchlistState,
     viewModel: TMDBViewModel,
-    appBarChanged: (String) -> Unit,
     navController: NavHostController,
 ) {
 
@@ -43,17 +41,25 @@ fun NavigationHost(
 
         composable(route = Screen.TrendingScreen.route) {
             TrendingScreen(trendingState) { viewModel.getTrending() }
-            appBarChanged(Screen.TrendingScreen.name)
+            viewModel.onEvent(
+                AppBarEvent.AppbarTitleChanged(
+                    Screen.TrendingScreen.name
+                )
+            )
         }
 
         composable(route = Screen.SearchScreen.route) {
             SearchSeriesScreen(
-                searchMovieState,
-                searchSeriesState,
-                { viewModel.onEvent(SearchMovieEvent.Search) },
-                { viewModel.onEvent(SearchSeriesEvent.Search) }
+                searchMovieState = searchMovieState,
+                searchSeriesState = searchSeriesState,
+                onMovieEvent = { viewModel.onEvent(it) },
+                onSeriesEvent = { viewModel.onEvent(it) }
             )
-            appBarChanged(Screen.SearchScreen.name)
+            viewModel.onEvent(
+                AppBarEvent.AppbarTitleChanged(
+                    Screen.SearchScreen.name
+                )
+            )
         }
 
         composable(
@@ -69,7 +75,11 @@ fun NavigationHost(
                 movieId = entry.arguments?.getInt("movie_id") ?: -1,
                 state = movieDetailsState
             ) { viewModel.getMovieDetails() }
-            appBarChanged(Screen.MovieDetailsScreen.name)
+            viewModel.onEvent(
+                AppBarEvent.AppbarTitleChanged(
+                    Screen.MovieDetailsScreen.name
+                )
+            )
         }
 
         composable(
@@ -85,12 +95,20 @@ fun NavigationHost(
                 seriesId = entry.arguments?.getInt("series_id") ?: -1,
                 state = seriesDetailsState
             ) { viewModel.getSeriesDetails() }
-            appBarChanged(Screen.SeriesDetailsScreen.name)
+            viewModel.onEvent(
+                AppBarEvent.AppbarTitleChanged(
+                    Screen.SeriesDetailsScreen.name
+                )
+            )
         }
 
         composable(route = Screen.WatchlistScreen.route) {
             WatchlistScreen(watchlistState) {}
-            appBarChanged(Screen.WatchlistScreen.name)
+            viewModel.onEvent(
+                AppBarEvent.AppbarTitleChanged(
+                    Screen.WatchlistScreen.name
+                )
+            )
         }
 
     }

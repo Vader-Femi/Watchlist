@@ -68,6 +68,20 @@ class TMDBViewModel @Inject constructor(
                     it.copy(query = event.query)
                 }
             }
+            is SearchMovieEvent.ErrorChanged -> {
+                searchMovieState.update {
+                    it.copy(searchError = event.error)
+                }
+            }
+
+            is SearchMovieEvent.Loading -> {
+                searchMovieState.update {
+                    it.copy(
+                        isLoading = true,
+                        searchError = null
+                    )
+                }
+            }
         }
     }
 
@@ -77,6 +91,20 @@ class TMDBViewModel @Inject constructor(
             is SearchSeriesEvent.SearchQueryChanged -> {
                 searchSeriesState.update {
                     it.copy(query = event.query)
+                }
+            }
+            is SearchSeriesEvent.ErrorChanged -> {
+                searchSeriesState.update {
+                    it.copy(searchError = event.error)
+                }
+            }
+
+            is SearchSeriesEvent.Loading -> {
+                searchSeriesState.update {
+                    it.copy(
+                        isLoading = true,
+                        searchError = null
+                    )
                 }
             }
         }
@@ -113,7 +141,7 @@ class TMDBViewModel @Inject constructor(
         }
     }
 
-    fun searchMovie() {
+    private fun searchMovie() {
         val query = searchMovieState.value.query
         val queryValidationResult = validateSearch.execute(query)
 
@@ -145,7 +173,7 @@ class TMDBViewModel @Inject constructor(
         }
     }
 
-    fun searchSeries() {
+    private fun searchSeries() {
         val query = searchSeriesState.value.query
         val queryValidationResult = validateSearch.execute(query)
 
