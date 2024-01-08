@@ -118,7 +118,7 @@ fun SearchSeriesScreen(
                                 )
                             ) else onSeriesEvent(SearchSeriesEvent.SearchQueryChanged(it))
                         },
-                        placeholder = { Text(text = if (page == moviePageIndex) "Crazy Rich Asians" else "The Office")},
+                        placeholder = { Text(text = if (page == moviePageIndex) "Search Movie" else "Search Series")},
                         isError = if (page == moviePageIndex) searchMovieState.searchError != null else searchSeriesState.searchError != null,
                         modifier = Modifier
                             .fillMaxWidth()

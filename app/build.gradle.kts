@@ -1,3 +1,4 @@
+import io.grpc.internal.SharedResourceHolder.release
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -8,13 +9,27 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
-val localPropertiesFile = rootProject.file("local.properties")
+val localPropertiesFile: File = rootProject.file("local.properties")
 val localProperties =  Properties()
 localProperties.load(FileInputStream(localPropertiesFile))
 
 android {
     namespace = "com.company.watchlist"
     compileSdk = 34
+
+
+    if (project.hasProperty("propertyfile") && project.hasProperty("key.store")) {
+
+        signingConfigs {
+            create("release") {
+                keyAlias = localProperties["key.alias"] as String
+                keyPassword = localProperties["key.alias.password"] as String
+                storeFile = project.properties["key.store"]?.let { file(it) }
+                storePassword = localProperties["key.store.password"] as String
+            }
+        }
+    }
+
 
     defaultConfig {
         applicationId = "com.company.watchlist"
@@ -35,6 +50,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -42,11 +58,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -107,7 +123,6 @@ dependencies {
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.5.0")
