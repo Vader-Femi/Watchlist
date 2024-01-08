@@ -35,8 +35,8 @@ jobs:
 
       - name: Setup API Key
         env:
-          APIKEY: ${{ secrets.TMDB_API_KEY }}
-        run: echo TMDB_API_KEY="TMDB_API_KEY" > ./local.properties
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+        run: echo TMDB_API_KEY="TMDB_API_KEY" > ./apikey.properties
 
 #      - name: Generate apikey.properties
 #        run: |
@@ -60,8 +60,8 @@ jobs:
 
       - name: Setup API Key
         env:
-          APIKEY: ${{ secrets.TMDB_API_KEY }}
-        run: echo TMDB_API_KEY="TMDB_API_KEY" > ./local.properties
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+        run: echo TMDB_API_KEY="TMDB_API_KEY" > ./apikey.properties
 
       # Set Current Date As Env Variable
       - name: Set current date as env variable
