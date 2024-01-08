@@ -1,5 +1,6 @@
 package com.company.watchlist.ui.trending
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,17 +19,27 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.company.watchlist.data.domain.trending.TrendingResult
+import com.company.watchlist.data.remote.response.trending.TrendingResult
+import com.company.watchlist.presentation.trending.TrendingEvent
 import com.company.watchlist.presentation.trending.TrendingState
+import com.company.watchlist.ui.components.ErrorAlertDialog
 
 @Composable
 fun TrendingScreen(
     state: TrendingState,
-    getTrending: () -> Unit,
+    trendingEvent: (TrendingEvent) -> Unit,
+    navigateToMovieDetails: (id: Int) -> Unit,
+    navigateToSeriesDetails: (id: Int) -> Unit,
 ) {
 
     LaunchedEffect(key1 = true) {
-        getTrending.invoke()
+        trendingEvent(TrendingEvent.GetTrending)
+    }
+
+    if (state.error != null) {
+        ErrorAlertDialog(state.error) {
+            trendingEvent(TrendingEvent.GetTrending)
+        }
     }
 
     LazyColumn {
@@ -37,7 +48,15 @@ fun TrendingScreen(
                 Card(
                     modifier = Modifier
                         .padding(10.dp, 8.dp, 10.dp, 8.dp)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .clickable {
+                            if (trendingItem.media_type == "movie") navigateToMovieDetails(
+                                trendingItem.id
+                            )
+                            else if (trendingItem.media_type == "tv") navigateToSeriesDetails(
+                                trendingItem.id
+                            )
+                        },
                     shape = RoundedCornerShape(10.dp)
                 ) {
                     Column(
@@ -130,11 +149,12 @@ fun TrendingScreen(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun TrendingScreenPreview() {
     TrendingScreen(
         state = TrendingState(
+            error = null,
             trendingList = listOf(
                 TrendingResult(
                     true,
@@ -177,8 +197,9 @@ fun TrendingScreenPreview() {
                     0
                 )
             )
-        )
-    ) {
-
-    }
+        ),
+        trendingEvent = {},
+        navigateToMovieDetails = {},
+        navigateToSeriesDetails = {}
+    )
 }

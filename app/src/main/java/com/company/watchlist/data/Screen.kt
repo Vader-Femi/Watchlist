@@ -9,7 +9,7 @@ sealed class Screen(val route: String, val name: String) {
     object MovieDetailsScreen : Screen("movie_details_screen", "Movie Details")
     object WatchlistScreen : Screen("watchlist_screen", "Watchlist")
 
-    fun withArgs(vararg args: Pair<String, String>): String {
+    fun withArgs(vararg args: Pair<String, Int>): String {
         return buildString {
             append(route)
             args.forEach { arg ->

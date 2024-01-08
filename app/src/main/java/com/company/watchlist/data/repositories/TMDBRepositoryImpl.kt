@@ -8,8 +8,8 @@ import com.company.watchlist.data.remote.Resource
 import com.company.watchlist.data.remote.TMDBApi
 import com.company.watchlist.data.remote.pagination.search.movie.SearchMoviePagingSource
 import com.company.watchlist.data.remote.pagination.search.series.SearchSeriesPagingSource
-import com.company.watchlist.data.domain.search.movie.SearchMovieResult
-import com.company.watchlist.data.domain.search.series.SearchSeriesResult
+import com.company.watchlist.data.remote.response.search.movie.SearchMovieResult
+import com.company.watchlist.data.remote.response.search.series.SearchSeriesResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -65,7 +65,7 @@ class TMDBRepositoryImpl @Inject constructor(
         api.getMovieDetails(movieId)
     }
 
-    suspend fun getSeriesDetails(movieId: Int) = safeApiCall {
+    override suspend fun getSeriesDetails(movieId: Int) = safeApiCall {
         api.getSeriesDetails(movieId)
     }
 

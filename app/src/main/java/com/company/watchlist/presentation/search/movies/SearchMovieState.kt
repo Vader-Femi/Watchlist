@@ -1,7 +1,7 @@
 package com.company.watchlist.presentation.search.movies
 
 import androidx.paging.PagingData
-import com.company.watchlist.data.domain.search.movie.SearchMovieResult
+import com.company.watchlist.data.remote.response.search.movie.SearchMovieResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

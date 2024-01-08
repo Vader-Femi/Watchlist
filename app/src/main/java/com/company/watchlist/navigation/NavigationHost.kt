@@ -40,7 +40,30 @@ fun NavigationHost(
     ) {
 
         composable(route = Screen.TrendingScreen.route) {
-            TrendingScreen(trendingState) { viewModel.getTrending() }
+            TrendingScreen(
+                state = trendingState,
+                trendingEvent = {viewModel.onEvent(it)},
+                navigateToMovieDetails = {
+                    navController.navigate(
+                        Screen.MovieDetailsScreen.withArgs(
+                            Pair("movie_id", it)
+                        )
+                    ) {
+                        popUpTo(Screen.TrendingScreen.route)
+                        launchSingleTop = true
+                    }
+                },
+                navigateToSeriesDetails = {
+                    navController.navigate(
+                        Screen.SeriesDetailsScreen.withArgs(
+                            Pair("series_id", it)
+                        )
+                    ) {
+                        popUpTo(Screen.TrendingScreen.route)
+                        launchSingleTop = true
+                    }
+                }
+            )
             viewModel.onEvent(
                 AppBarEvent.AppbarTitleChanged(
                     Screen.TrendingScreen.name
@@ -53,7 +76,27 @@ fun NavigationHost(
                 searchMovieState = searchMovieState,
                 searchSeriesState = searchSeriesState,
                 onMovieEvent = { viewModel.onEvent(it) },
-                onSeriesEvent = { viewModel.onEvent(it) }
+                onSeriesEvent = { viewModel.onEvent(it) },
+                navigateToMovieDetails = {
+                    navController.navigate(
+                        Screen.MovieDetailsScreen.withArgs(
+                            Pair("movie_id", it)
+                        )
+                    ) {
+                        popUpTo(Screen.SearchScreen.route)
+                        launchSingleTop = true
+                    }
+                },
+                navigateToSeriesDetails = {
+                    navController.navigate(
+                        Screen.SeriesDetailsScreen.withArgs(
+                            Pair("series_id", it)
+                        )
+                    ) {
+                        popUpTo(Screen.SearchScreen.route)
+                        launchSingleTop = true
+                    }
+                }
             )
             viewModel.onEvent(
                 AppBarEvent.AppbarTitleChanged(
@@ -67,6 +110,7 @@ fun NavigationHost(
             arguments = listOf(
                 navArgument("movie_id") {
                     type = NavType.IntType
+                    defaultValue = -1
                     nullable = false
                 }
             )
@@ -74,7 +118,7 @@ fun NavigationHost(
             MovieDetailsScreen(
                 movieId = entry.arguments?.getInt("movie_id") ?: -1,
                 state = movieDetailsState
-            ) { viewModel.getMovieDetails() }
+            ) { viewModel.onEvent(it) }
             viewModel.onEvent(
                 AppBarEvent.AppbarTitleChanged(
                     Screen.MovieDetailsScreen.name
@@ -87,6 +131,7 @@ fun NavigationHost(
             arguments = listOf(
                 navArgument("series_id") {
                     type = NavType.IntType
+                    defaultValue = -1
                     nullable = false
                 }
             )
@@ -94,7 +139,7 @@ fun NavigationHost(
             SeriesDetailsScreen(
                 seriesId = entry.arguments?.getInt("series_id") ?: -1,
                 state = seriesDetailsState
-            ) { viewModel.getSeriesDetails() }
+            ) { viewModel.onEvent(it) }
             viewModel.onEvent(
                 AppBarEvent.AppbarTitleChanged(
                     Screen.SeriesDetailsScreen.name

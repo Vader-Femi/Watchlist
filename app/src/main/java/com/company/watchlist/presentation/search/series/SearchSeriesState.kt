@@ -1,7 +1,7 @@
 package com.company.watchlist.presentation.search.series
 
 import androidx.paging.PagingData
-import com.company.watchlist.data.domain.search.series.SearchSeriesResult
+import com.company.watchlist.data.remote.response.search.series.SearchSeriesResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

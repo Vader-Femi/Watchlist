@@ -1,6 +1,7 @@
 package com.company.watchlist.ui.search
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -46,8 +48,8 @@ import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import com.company.watchlist.data.SearchTabCarousel
-import com.company.watchlist.data.domain.search.movie.SearchMovieResult
-import com.company.watchlist.data.domain.search.series.SearchSeriesResult
+import com.company.watchlist.data.remote.response.search.movie.SearchMovieResult
+import com.company.watchlist.data.remote.response.search.series.SearchSeriesResult
 import com.company.watchlist.presentation.search.movies.SearchMovieEvent
 import com.company.watchlist.presentation.search.movies.SearchMovieState
 import com.company.watchlist.presentation.search.series.SearchSeriesEvent
@@ -65,6 +67,8 @@ fun SearchSeriesScreen(
     searchSeriesState: SearchSeriesState,
     onMovieEvent: (SearchMovieEvent) -> Unit,
     onSeriesEvent: (SearchSeriesEvent) -> Unit,
+    navigateToMovieDetails: (id :Int) -> Unit,
+    navigateToSeriesDetails: (id :Int) -> Unit
 ) {
     val pagerState = rememberPageState()
     val coroutineScope = rememberCoroutineScope()
@@ -152,7 +156,7 @@ fun SearchSeriesScreen(
                 if (page == moviePageIndex) {
 
                     items(movieList) { movie ->
-                        MovieItem(movie)
+                        MovieItem(movie, navigateToMovieDetails)
                     }
 
 
@@ -178,7 +182,7 @@ fun SearchSeriesScreen(
                 if (page == seriesPageIndex) {
 
                     items(seriesList) { series ->
-                        SeriesItem(series)
+                        SeriesItem(series, navigateToSeriesDetails)
                     }
 
                     when (seriesList.loadState.append) {
@@ -211,11 +215,15 @@ fun SearchSeriesScreen(
 @Composable
 fun MovieItem(
     movie: SearchMovieResult,
+    navigateToDetails: (id: Int) -> Unit,
 ) {
     Card(
         modifier = Modifier
             .padding(10.dp, 8.dp, 10.dp, 8.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable {
+                navigateToDetails(movie.id)
+            },
         shape = RoundedCornerShape(10.dp)
     ) {
         Column(
@@ -289,11 +297,15 @@ fun MovieItem(
 @Composable
 fun SeriesItem(
     series: SearchSeriesResult,
+    navigateToDetails: (id: Int) -> Unit,
 ) {
     Card(
         modifier = Modifier
             .padding(10.dp, 8.dp, 10.dp, 8.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable {
+                navigateToDetails(series.id)
+            },
         shape = RoundedCornerShape(10.dp)
     ) {
         Column(
@@ -331,7 +343,7 @@ fun SeriesItem(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 10.dp, bottom = 10.dp),
-                            text = "First aired ${series.first_air_date}",
+                            text = "First Aired ${series.first_air_date}",
                             textAlign = TextAlign.Center
                         )
 
@@ -339,7 +351,7 @@ fun SeriesItem(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 10.dp, bottom = 10.dp),
-                            text = "Original language: ${series.original_language.uppercase()}",
+                            text = "Original Language: ${series.original_language.uppercase()}",
                             textAlign = TextAlign.Center
                         )
 
@@ -371,7 +383,9 @@ fun TabHeader(
     onClick: () -> Unit,
 ) {
     Box(
-        modifier = modifier.padding(top = 8.dp, bottom = 8.dp)
+        modifier = modifier
+            .padding(top = 8.dp, bottom = 8.dp),
+        contentAlignment = Alignment.Center
     ) {
         Tab(
             modifier = if (isSelected) Modifier
@@ -379,11 +393,14 @@ fun TabHeader(
                 .background(
                     MaterialTheme.colorScheme.primary
                 )
+                .width(120.dp)
             else Modifier
                 .clip(AbsoluteRoundedCornerShape(50))
                 .background(
                     MaterialTheme.colorScheme.surface
-                ),
+                )
+                .width(150.dp)
+            ,
             selected = isSelected,
             onClick = onClick,
             text = {
@@ -528,7 +545,9 @@ fun SearchSeriesScreenPreview() {
             }
         ),
         onMovieEvent = {},
-        onSeriesEvent = {}
+        onSeriesEvent = {},
+        navigateToMovieDetails = {},
+        navigateToSeriesDetails = {}
     )
 }
 
