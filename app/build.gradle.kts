@@ -1,4 +1,3 @@
-import io.grpc.internal.SharedResourceHolder.release
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -9,26 +8,38 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
-val localPropertiesFile: File = rootProject.file("local.properties")
-val localProperties =  Properties()
-localProperties.load(FileInputStream(localPropertiesFile))
+val apikeyPropertiesFile: File = rootProject.file("apikey.properties")
+val apikeyProperties = Properties()
+apikeyProperties.load(FileInputStream(apikeyPropertiesFile))
+
+val keystorePropertiesFile : File = rootProject.file("keystore.properties")
+val keystoreProperties = Properties()
+keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 android {
     namespace = "com.company.watchlist"
     compileSdk = 34
 
-
-    if (project.hasProperty("propertyfile") && project.hasProperty("key.store")) {
-
-        signingConfigs {
-            create("release") {
-                keyAlias = localProperties["key.alias"] as String
-                keyPassword = localProperties["key.alias.password"] as String
-                storeFile = project.properties["key.store"]?.let { file(it) }
-                storePassword = localProperties["key.store.password"] as String
-            }
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties.getProperty("keyAlias") as String
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            storeFile = file(keystoreProperties.getProperty("storeFile") as String)
+            storePassword = keystoreProperties.getProperty("storePassword")
         }
     }
+
+//    if (project.hasProperty("propertyfile") && project.hasProperty("key.store")) {
+//
+//        signingConfigs {
+//            create("release") {
+//                keyAlias = localProperties["key.alias"] as String
+//                keyPassword = localProperties["key.alias.password"] as String
+//                storeFile = project.properties["key.store"]?.let { file(it) }
+//                storePassword = localProperties["key.store.password"] as String
+//            }
+//        }
+//    }
 
 
     defaultConfig {
@@ -39,7 +50,8 @@ android {
         versionName = "1.0"
 
 
-        buildConfigField ("String", "TMDB_API_KEY", localProperties.getProperty("TMDB_API_KEY") ) // localProperties['TMDB_API_KEY']  "\"${properties.getProperty('WEB_CLIENT_ID')}\""
+//        buildConfigField ("String", "TMDB_API_KEY", localProperties.getProperty("TMDB_API_KEY") ) // localProperties['TMDB_API_KEY']  "\"${properties.getProperty('WEB_CLIENT_ID')}\""
+        buildConfigField("String", "TMDB_API_KEY", apikeyProperties.getProperty("TMDB_API_KEY"))
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -55,6 +67,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

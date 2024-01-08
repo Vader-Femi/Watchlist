@@ -25,12 +25,20 @@ jobs:
     steps:
      - name: Checkout
        uses: actions/checkout@v3.5.2
+
      - name: Setup Java JDK
        uses: actions/setup-java@v1.4.4
        with:
          java-version: 17
          distribution: "zulu"
          cache: gradle
+
+     - name: Generate apikey.properties
+       run: |
+         TMDB_API_KEY:"${{ vars.TMDB_API_KEY }}"
+         EOF
+        
+
      - name: Run Tests
        run: bash ./gradlew test --stacktrace
 
@@ -40,6 +48,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.2
+
+      - name: Generate apikey.properties
+        run: |
+          TMDB_API_KEY:"${{ vars.TMDB_API_KEY }}"
+          EOF
 
       # Set Current Date As Env Variable
       - name: Set current date as env variable
@@ -113,13 +126,6 @@ jobs:
           name: ${{ env.date_today }} - ${{ env.app_name }}
           path: ${{ env.main_project_module }}/build/outputs/bundle/release/
           retention-days: 30
-
-  #      - name: Upload a Build Artifact
-  #        uses: actions/upload-artifact@v3.1.2
-  #        with:
-  #          name: app
-  #          path: app/build/outputs/apk/debug/app-debug.apk
-  #          retention-days: 30
 
   generate-release:
     needs: build
