@@ -12,9 +12,9 @@ val apikeyPropertiesFile: File = rootProject.file("apikey.properties")
 val apikeyProperties = Properties()
 apikeyProperties.load(FileInputStream(apikeyPropertiesFile))
 
-val keystorePropertiesFile : File = rootProject.file("keystore.properties")
-val keystoreProperties = Properties()
-keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+//val keystorePropertiesFile : File = rootProject.file("keystore.properties")
+//val keystoreProperties = Properties()
+//keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 android {
     namespace = "com.company.watchlist"
@@ -22,10 +22,10 @@ android {
 
     signingConfigs {
         create("release") {
-            keyAlias = keystoreProperties.getProperty("keyAlias") as String
-            keyPassword = keystoreProperties.getProperty("keyPassword")
-            storeFile = file(keystoreProperties.getProperty("storeFile") as String)
-            storePassword = keystoreProperties.getProperty("storePassword")
+//            keyAlias = keystoreProperties.getProperty("keyAlias") as String
+//            keyPassword = keystoreProperties.getProperty("keyPassword")
+//            storeFile = file(keystoreProperties.getProperty("storeFile") as String)
+//            storePassword = keystoreProperties.getProperty("storePassword")
         }
     }
 
