@@ -187,7 +187,7 @@ class TMDBViewModel @Inject constructor(
     }
 
     private fun searchMovie() {
-        val query = searchMovieState.value.query
+        val query = searchMovieState.value.query.trim()
         val queryValidationResult = validateSearch.execute(query)
 
         val hasError = listOf(
@@ -219,7 +219,7 @@ class TMDBViewModel @Inject constructor(
     }
 
     private fun searchSeries() {
-        val query = searchSeriesState.value.query
+        val query = searchSeriesState.value.query.trim()
         val queryValidationResult = validateSearch.execute(query)
 
         val hasError = listOf(

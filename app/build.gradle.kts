@@ -12,35 +12,27 @@ val apikeyPropertiesFile: File = rootProject.file("apikey.properties")
 val apikeyProperties = Properties()
 apikeyProperties.load(FileInputStream(apikeyPropertiesFile))
 
-//val keystorePropertiesFile : File = rootProject.file("keystore.properties")
-//val keystoreProperties = Properties()
-//keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+val keystorePropertiesFile: File = rootProject.file("keystore.properties")
+val keystoreProperties = Properties()
+keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 android {
     namespace = "com.company.watchlist"
     compileSdk = 34
 
     signingConfigs {
-        create("release") {
-//            keyAlias = keystoreProperties.getProperty("keyAlias") as String
-//            keyPassword = keystoreProperties.getProperty("keyPassword")
-//            storeFile = file(keystoreProperties.getProperty("storeFile") as String)
-//            storePassword = keystoreProperties.getProperty("storePassword")
-        }
+
     }
 
-//    if (project.hasProperty("propertyfile") && project.hasProperty("key.store")) {
-//
-//        signingConfigs {
-//            create("release") {
-//                keyAlias = localProperties["key.alias"] as String
-//                keyPassword = localProperties["key.alias.password"] as String
-//                storeFile = project.properties["key.store"]?.let { file(it) }
-//                storePassword = localProperties["key.store.password"] as String
-//            }
+
+//    signingConfigs {
+//        create("release") {
+//            keyAlias = keystoreProperties.getProperty("KEY_ALIAS") as String
+//            keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
+//            storeFile = file(keystoreProperties.getProperty("STORE_FILE") as String)
+//            storePassword = keystoreProperties.getProperty("STORE_PASSWORD")
 //        }
 //    }
-
 
     defaultConfig {
         applicationId = "com.company.watchlist"
@@ -49,8 +41,6 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-
-//        buildConfigField ("String", "TMDB_API_KEY", localProperties.getProperty("TMDB_API_KEY") ) // localProperties['TMDB_API_KEY']  "\"${properties.getProperty('WEB_CLIENT_ID')}\""
         buildConfigField("String", "TMDB_API_KEY", apikeyProperties.getProperty("TMDB_API_KEY"))
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -62,12 +52,17 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
-            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
+//            signingConfig = signingConfigs.getByName("release")
+            buildConfigField(
+                "String",
+                "TMDB_API_KEY",
+                apikeyProperties.getProperty("TMDB_API_KEY")
+            )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -115,20 +110,20 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.6")
 
     //OnBoarding Pager
-    implementation ("com.google.accompanist:accompanist-pager:0.28.0")
+    implementation("com.google.accompanist:accompanist-pager:0.28.0")
 
     //Dagger-Hilt
     implementation("com.google.dagger:hilt-android:2.48")
-    ksp ("com.google.dagger:hilt-android-compiler:2.48")
-    ksp ("androidx.hilt:hilt-compiler:1.1.0")
+    ksp("com.google.dagger:hilt-android-compiler:2.48")
+    ksp("androidx.hilt:hilt-compiler:1.1.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
     implementation("androidx.hilt:hilt-navigation:1.1.0")
 
     //Retrofit
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.1")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
 
     //Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
@@ -141,11 +136,11 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.5.0")
 
     //paging3
-    implementation ("androidx.paging:paging-runtime-ktx:3.2.1")
-    implementation ("androidx.paging:paging-compose:3.2.1")
+    implementation("androidx.paging:paging-runtime-ktx:3.2.1")
+    implementation("androidx.paging:paging-compose:3.2.1")
 
     //Room
     implementation("androidx.room:room-ktx:2.6.1")
-    ksp ("androidx.room:room-compiler:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-paging:2.6.1")
 }
