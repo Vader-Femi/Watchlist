@@ -20,7 +20,6 @@ object RetrofitBuilder{
                     }.build())
                 }.also { client ->
                     if (BuildConfig.DEBUG) {
-                        //todo This should not slip into Release sha
                         val logging = HttpLoggingInterceptor()
                         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
                         client.addInterceptor(logging)
