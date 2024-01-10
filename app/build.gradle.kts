@@ -24,7 +24,7 @@ android {
         create("release") {
             keyAlias = keystoreProperties.getProperty("KEY_ALIAS") // as String
             keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
-            storeFile = file(keystoreProperties.getProperty("STORE_FILE") as String )
+            storeFile = file(keystoreProperties.getProperty("STORE_FILE"))
             storePassword = keystoreProperties.getProperty("STORE_PASSWORD")
         }
     }
