@@ -25,7 +25,7 @@ android {
             keyAlias = keystoreProperties.getProperty("KEY_ALIAS")
             keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
             storePassword = keystoreProperties.getProperty("STORE_PASSWORD")
-            storeFile = file("WatchlistKeystore.jks"/*keystoreProperties.getProperty("STORE_FILE")*/)
+            storeFile = rootProject.file("WatchlistKeystore.jks"/*keystoreProperties.getProperty("STORE_FILE")*/)
         }
     }
 
