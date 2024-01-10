@@ -36,16 +36,16 @@ jobs:
       - name: Generate apikey.properties
         run: |
           cat <<EOF > apikey.properties
-          TMDB_API_KEY:"${{ vars.TMDB_API_KEY }}"
+          TMDB_API_KEY:"${{ secrets.TMDB_API_KEY }}"
           EOF
 
       - name: Generate keystore.properties
         run: |
           cat <<EOF > keystore.properties
-          storePassword:${{ vars.STORE_PASSWORD }}
-          keyPassword:${{ vars.KEY_PASSWORD }}
-          keyAlias:${{ vars.KEY_ALIAS }}
-          storeFile:${{ vars.STORE_FILE }}
+          storePassword:${{ secrets.STORE_PASSWORD }}
+          keyPassword:${{ secrets.KEY_PASSWORD }}
+          keyAlias:${{ secrets.KEY_ALIAS }}
+          storeFile:${{ secrets.STORE_FILE }}
           EOF
 
       - name: Run Tests
@@ -67,10 +67,10 @@ jobs:
       - name: Generate keystore.properties
         run: |
           cat <<EOF > keystore.properties
-          keyAlias:${{ vars.KEY_ALIAS }}
-          storePassword:${{ vars.STORE_PASSWORD }}
-          storeFile:${{ vars.STORE_FILE }}
-          keyPassword:${{ vars.KEY_PASSWORD }}
+          keyAlias:${{ secrets.KEY_ALIAS }}
+          storePassword:${{ secrets.STORE_PASSWORD }}
+          storeFile:${{ secrets.STORE_FILE }}
+          keyPassword:${{ secrets.KEY_PASSWORD }}
           EOF
 
       # Set Current Date As Env Variable
