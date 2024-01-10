@@ -70,18 +70,8 @@ jobs:
           cat <<EOF > keystore.properties
           keyAlias:${{ secrets.KEY_ALIAS }}
           storePassword:${{ secrets.STORE_PASSWORD }}
-#          storeFile:${{ secrets.STORE_FILE }}
+          storeFile:WatchlistKeystore.jks
           keyPassword:${{ secrets.KEY_PASSWORD }}
-          EOF
-
-      - name: Set storeFile
-        #        uses: actions/checkout@v3.5.2
-        run: |
-          cat <<EOF > keystore.properties
-#          keyAlias:${{ secrets.KEY_ALIAS }}
-#          storePassword:${{ secrets.STORE_PASSWORD }}
-          storeFile:${{ secrets.STORE_FILE }}
-#          keyPassword:${{ secrets.KEY_PASSWORD }}
           EOF
 
       # Set Current Date As Env Variable
