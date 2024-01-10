@@ -87,10 +87,10 @@ jobs:
       - name: Generate keystore.properties
         run: |
           cat <<EOF > keystore.properties
-          storePassword:${{ vars.STORE_PASSWORD }}
-          keyPassword:${{ vars.KEY_PASSWORD }}
           keyAlias:${{ vars.KEY_ALIAS }}
+          storePassword:${{ vars.STORE_PASSWORD }}
           storeFile:${{ vars.STORE_FILE }}
+          keyPassword:${{ vars.KEY_PASSWORD }}
           EOF
 
       # Set Current Date As Env Variable
