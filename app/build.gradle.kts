@@ -12,27 +12,22 @@ val apikeyPropertiesFile: File = rootProject.file("apikey.properties")
 val apikeyProperties = Properties()
 apikeyProperties.load(FileInputStream(apikeyPropertiesFile))
 
-//val keystorePropertiesFile: File = rootProject.file("keystore.properties")
-//val keystoreProperties = Properties()
-//keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+val keystorePropertiesFile: File = rootProject.file("keystore.properties")
+val keystoreProperties = Properties()
+keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 android {
     namespace = "com.company.watchlist"
     compileSdk = 34
 
     signingConfigs {
-
+        create("release") {
+            keyAlias = keystoreProperties.getProperty("KEY_ALIAS") as String
+            keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
+            storeFile = file(keystoreProperties.getProperty("STORE_FILE") as String)
+            storePassword = keystoreProperties.getProperty("STORE_PASSWORD")
+        }
     }
-
-
-//    signingConfigs {
-//        create("release") {
-//            keyAlias = keystoreProperties.getProperty("KEY_ALIAS") as String
-//            keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
-//            storeFile = file(keystoreProperties.getProperty("STORE_FILE") as String)
-//            storePassword = keystoreProperties.getProperty("STORE_PASSWORD")
-//        }
-//    }
 
     defaultConfig {
         applicationId = "com.company.watchlist"
@@ -51,18 +46,20 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-//            signingConfig = signingConfigs.getByName("release")
+
+            signingConfig = signingConfigs.getByName("release")
+
             buildConfigField(
                 "String",
                 "TMDB_API_KEY",
                 apikeyProperties.getProperty("TMDB_API_KEY")
             )
-            signingConfig = signingConfigs.getByName("debug")
+//            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {

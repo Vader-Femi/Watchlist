@@ -33,11 +33,6 @@ jobs:
           distribution: "zulu"
           cache: gradle
 
-#      - name: Setup API Key
-#        env:
-#          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-#        run: echo TMDB_API_KEY="TMDB_API_KEY" > ./apikey.properties
-
       - name: Generate apikey.properties
         run: |
           cat <<EOF > apikey.properties
@@ -53,11 +48,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.2
-
-#      - name: Setup API Key
-#        env:
-#          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
-#        run: echo TMDB_API_KEY="TMDB_API_KEY" > ./apikey.properties
 #
 #      - name: Setup KEY_ALIAS
 #        env:
@@ -85,14 +75,14 @@ jobs:
           TMDB_API_KEY:"${{ vars.TMDB_API_KEY }}"
           EOF
           
-#      - name: Generate keystore.properties
-#        run: |
-#          cat <<EOF > keystore.properties
-#          storePassword:${{ secrets.STORE_PASSWORD }}
-#          keyPassword:${{ secrets.KEY_PASSWORD }}
-#          keyAlias:${{ secrets.KEY_ALIAS }}
-#          storeFile:${{ vars.STORE_FILE }}
-#          EOF
+      - name: Generate keystore.properties
+        run: |
+          cat <<EOF > keystore.properties
+          storePassword:${{ secrets.STORE_PASSWORD }}
+          keyPassword:${{ secrets.KEY_PASSWORD }}
+          keyAlias:${{ secrets.KEY_ALIAS }}
+          storeFile:${{ vars.STORE_FILE }}
+          EOF
 
       # Set Current Date As Env Variable
       - name: Set current date as env variable
@@ -142,15 +132,6 @@ jobs:
       - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module
         run: ./gradlew ${{ env.main_project_module }}:bundleRelease
 
-      # Upload Artifact Build
-      # Noted For Output [main_project_module]/build/outputs/apk/debug/
-      - name: Upload APK Debug - ${{ env.repository_name }}
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          name: ${{ env.date_today }} - ${{ env.app_name }}
-          path: ${{ env.main_project_module }}/build/outputs/apk/debug/
-          retention-days: 30
-
       # Noted For Output [main_project_module]/build/outputs/apk/release/
       - name: Upload APK Release - ${{ env.repository_name }}
         uses: actions/upload-artifact@v3.1.2
@@ -165,6 +146,15 @@ jobs:
         with:
           name: ${{ env.date_today }} - ${{ env.app_name }}
           path: ${{ env.main_project_module }}/build/outputs/bundle/release/
+          retention-days: 30
+
+      # Upload Artifact Build
+      # Noted For Output [main_project_module]/build/outputs/apk/debug/
+      - name: Upload APK Debug - ${{ env.repository_name }}
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: ${{ env.date_today }} - ${{ env.app_name }}
+          path: ${{ env.main_project_module }}/build/outputs/apk/debug/
           retention-days: 30
 
   generate-release:
