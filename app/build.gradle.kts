@@ -20,14 +20,14 @@ android {
     namespace = "com.company.watchlist"
     compileSdk = 34
 
-    signingConfigs {
-        create("release") {
-            keyAlias = keystoreProperties.getProperty("KEY_ALIAS")
-            keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
-            storePassword = keystoreProperties.getProperty("STORE_PASSWORD")
-            storeFile = file(keystoreProperties.getProperty("STORE_FILE"))
-        }
-    }
+//    signingConfigs {
+//        create("release") {
+//            keyAlias = keystoreProperties.getProperty("KEY_ALIAS")
+//            keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
+//            storePassword = keystoreProperties.getProperty("STORE_PASSWORD")
+//            storeFile = file(keystoreProperties.getProperty("STORE_FILE"))
+//        }
+//    }
 
     defaultConfig {
         applicationId = "com.company.watchlist"
@@ -52,14 +52,14 @@ android {
                 "proguard-rules.pro"
             )
 
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.getByName("debug")
+//            signingConfig = signingConfigs.getByName("release")
 
             buildConfigField(
                 "String",
                 "TMDB_API_KEY",
                 apikeyProperties.getProperty("TMDB_API_KEY")
             )
-//            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
