@@ -22,9 +22,9 @@ fun BottomNavigationBar(
     val backStackEntry = navController.currentBackStackEntryAsState()
     NavigationBar(
         modifier = modifier
-            .padding(5.dp)
+            .padding(18.dp, 10.dp, 18.dp, 8.dp)
             .shadow(
-                elevation = 5.dp,
+                elevation = 15.dp,
                 spotColor = MaterialTheme.colorScheme.surfaceVariant,
                 shape = RoundedCornerShape(10.dp)
             ),

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -78,10 +77,12 @@ fun SearchSeriesScreen(
         searchMovieState.searchResult.collectAsLazyPagingItems()
     val seriesList = searchSeriesState.searchResult.collectAsLazyPagingItems()
 
-    Column {
+    Column(
+        modifier = Modifier.padding(15.dp, 0.dp, 15.dp, 0.dp)
+    ) {
         TabRow(
             selectedTabIndex = pagerState.currentPage,
-            indicator = {}
+//            indicator = {}
         ) {
             SearchTabCarousel.getItems().forEachIndexed { index, searchTabItem ->
                 TabHeader(
@@ -389,17 +390,17 @@ fun TabHeader(
     ) {
         Tab(
             modifier = if (isSelected) Modifier
-                .clip(AbsoluteRoundedCornerShape(50))
+                .clip(AbsoluteRoundedCornerShape(30))
                 .background(
                     MaterialTheme.colorScheme.primary
                 )
-                .width(120.dp)
+//                .width(120.dp)
             else Modifier
-                .clip(AbsoluteRoundedCornerShape(50))
+                .clip(AbsoluteRoundedCornerShape(30))
                 .background(
                     MaterialTheme.colorScheme.surface
                 )
-                .width(150.dp)
+//                .width(120.dp)
             ,
             selected = isSelected,
             onClick = onClick,

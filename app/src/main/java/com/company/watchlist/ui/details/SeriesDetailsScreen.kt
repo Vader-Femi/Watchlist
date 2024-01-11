@@ -95,7 +95,7 @@ fun SeriesDetailsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 5.dp, bottom = 5.dp),
-                        text = state.name,
+                        text = state.name ?: "",
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.tertiary
                     )
@@ -120,7 +120,7 @@ fun SeriesDetailsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 10.dp, bottom = 10.dp),
-                        text = "Original language: ${state.originalLanguage.uppercase()}",
+                        text = "Original language: ${state.originalLanguage?.uppercase()}",
                         textAlign = TextAlign.Center
                     )
 
@@ -137,7 +137,7 @@ fun SeriesDetailsScreen(
         }
 
         Text(
-            text = state.overview,
+            text = state.overview ?: "",
             color = MaterialTheme.colorScheme.outline,
             textAlign = TextAlign.Left
         )
@@ -158,7 +158,7 @@ fun SeriesDetailsScreen(
             )
         }
 
-        if (state.tagline.isNotBlank()) {
+        if (state.tagline?.isNotBlank() == true) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -414,7 +414,7 @@ fun SeriesDetailsScreen(
             )
         }
 
-        if (state.homepage.isNotBlank()) {
+        if (state.homepage?.isNotBlank() == true) {
 
             val annotatedText = buildAnnotatedString {
                 pushStringAnnotation(

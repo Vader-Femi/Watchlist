@@ -258,6 +258,13 @@ class TMDBViewModel @Inject constructor(
 
             val movieId = movieDetailState.value.id
 
+            if (movieId == null){
+                movieDetailState.update {
+                    it.copy(isLoading = false, error = null)
+                }
+                return@launch
+            }
+
             when (val result = repository.getMovieDetails(movieId)) {
                 is Resource.Failure -> {
                     if (result.isNetworkError == true){
@@ -314,6 +321,13 @@ class TMDBViewModel @Inject constructor(
             }
 
             val seriesId = seriesDetailState.value.id
+
+            if (seriesId == null){
+                seriesDetailState.update {
+                    it.copy(isLoading = false, error = null)
+                }
+                return@launch
+            }
 
             when (val result = repository.getSeriesDetails(seriesId)) {
                 is Resource.Failure -> {

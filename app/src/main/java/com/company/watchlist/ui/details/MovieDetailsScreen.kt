@@ -97,7 +97,7 @@ fun MovieDetailsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 5.dp, bottom = 5.dp),
-                        text = state.title,
+                        text = state.title ?: "",
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.tertiary
                     )
@@ -114,7 +114,7 @@ fun MovieDetailsScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 10.dp, bottom = 10.dp),
-                        text = "Original language: ${state.original_language.uppercase()}",
+                        text = "Original language: ${state.original_language?.uppercase()}",
                         textAlign = TextAlign.Center
                     )
 
@@ -137,7 +137,7 @@ fun MovieDetailsScreen(
         )
 
         Text(
-            text = state.overview,
+            text = state.overview ?: "",
             color = MaterialTheme.colorScheme.outline,
             textAlign = TextAlign.Left
         )
@@ -158,7 +158,7 @@ fun MovieDetailsScreen(
             )
         }
 
-        if (state.tagline.isNotBlank()) {
+        if (state.tagline?.isNotBlank() == true) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -183,7 +183,7 @@ fun MovieDetailsScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp, bottom = 10.dp),
-            text = "Status: " + state.status.ifBlank { "Unknown" },
+            text = "Status: " + state.status?.ifBlank { "Unknown" },
             textAlign = TextAlign.Left
         )
 
@@ -249,7 +249,7 @@ fun MovieDetailsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp, bottom = 10.dp),
-                text = "Money Made/Lost: ${convertToCurrency(state.revenue - state.budget)}",
+                text = "Money Made/Lost: ${convertToCurrency(state.revenue?.minus(state.budget ?: 0))}",
                 textAlign = TextAlign.Left
             )
         }
@@ -291,7 +291,7 @@ fun MovieDetailsScreen(
             }
         }
 
-        if (state.homepage.isNotBlank()) {
+        if (state.homepage?.isNotBlank() == true) {
 
             val annotatedText = buildAnnotatedString {
                 pushStringAnnotation(
@@ -385,8 +385,8 @@ fun MovieDetailsScreen(
     }
 }
 
-private fun convertToCurrency(number: Int): String {
-    return NumberFormat.getCurrencyInstance(Locale("en", "US")).format(number)
+private fun convertToCurrency(number: Int?): String {
+    return NumberFormat.getCurrencyInstance(Locale("en", "US")).format(number ?: 0)
 }
 
 @Preview(showBackground = true, showSystemUi = true)
