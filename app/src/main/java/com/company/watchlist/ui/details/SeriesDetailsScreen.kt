@@ -16,6 +16,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -45,6 +48,7 @@ import com.company.watchlist.presentation.details.series.SeriesDetailsEvent
 import com.company.watchlist.presentation.details.series.SeriesDetailsState
 import com.company.watchlist.ui.components.ErrorAlertDialog
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SeriesDetailsScreen(
     seriesId: Int,
@@ -54,6 +58,10 @@ fun SeriesDetailsScreen(
 
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isLoading,
+        onRefresh = { seriesDetailsEvent(SeriesDetailsEvent.GetDetails) }
+    )
 
     LaunchedEffect(key1 = true) {
         seriesDetailsEvent(SeriesDetailsEvent.SetId(seriesId))
@@ -70,7 +78,8 @@ fun SeriesDetailsScreen(
         modifier = Modifier
             .padding(10.dp, 8.dp, 10.dp, 0.dp)
             .fillMaxWidth()
-            .verticalScroll(scrollState),
+            .verticalScroll(scrollState)
+            .pullRefresh(pullRefreshState),
     ) {
         Column(
             verticalArrangement = Arrangement.Center

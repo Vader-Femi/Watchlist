@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,6 +26,7 @@ import com.company.watchlist.presentation.trending.TrendingEvent
 import com.company.watchlist.presentation.trending.TrendingState
 import com.company.watchlist.ui.components.ErrorAlertDialog
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TrendingScreen(
     state: TrendingState,
@@ -32,9 +35,10 @@ fun TrendingScreen(
     navigateToSeriesDetails: (id: Int) -> Unit,
 ) {
 
-    LaunchedEffect(key1 = true) {
-        trendingEvent(TrendingEvent.GetTrending)
-    }
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isLoading,
+        onRefresh = { trendingEvent(TrendingEvent.GetTrending) }
+    )
 
     if (state.error != null) {
         ErrorAlertDialog(state.error) {
@@ -42,7 +46,11 @@ fun TrendingScreen(
         }
     }
 
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .pullRefresh(pullRefreshState)
+    ) {
         state.trendingList.forEach { trendingItem ->
             item {
                 Card(

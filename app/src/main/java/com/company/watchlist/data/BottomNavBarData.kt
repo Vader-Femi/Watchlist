@@ -3,6 +3,7 @@ package com.company.watchlist.data
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.company.watchlist.navigation.Screen
 
 object BottomNavBarData {
     fun getItems(): List<BottomBarItem> {
@@ -19,7 +20,7 @@ object BottomNavBarData {
             ),
             BottomBarItem(
                 name = "Watchlist",
-                route = Screen.WatchlistScreen.route,
+                route = Screen.FavouritesScreen.route,
                 icon = Icons.Default.Favorite
             ))
     }

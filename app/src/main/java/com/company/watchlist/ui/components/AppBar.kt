@@ -1,42 +1,56 @@
 package com.company.watchlist.ui.components
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import com.company.watchlist.data.Screen
+import com.company.watchlist.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBar(
-    title: String,
+    screen: Screen,
+    scrollBehavior: TopAppBarScrollBehavior,
     backArrow: () -> Unit,
 ) {
-    TopAppBar(
-        title = {
-            Text(
-                text = title
-            )
-        },
-        navigationIcon = {
-            if (title == Screen.MovieDetailsScreen.name || title == Screen.SeriesDetailsScreen.name)
-                IconButton(onClick = backArrow) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back Arrow"
-                    )
-                }
-        },
-        colors = TopAppBarDefaults.largeTopAppBarColors(
-//            containerColor = MaterialTheme.colorScheme.primary,
-//            titleContentColor = MaterialTheme.colorScheme.onPrimary,
-//            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-//            actionIconContentColor = MaterialTheme.colorScheme.onSecondary,
-        )
-    )
+
+    when (screen) {
+        Screen.AuthenticationRoute -> {}
+
+        Screen.FavouritesScreen -> {
+            LargeAppBar(screen = screen, backArrow = backArrow, scrollBehavior = scrollBehavior)
+        }
+
+        Screen.LogInScreen -> {
+            LargeAppBar(screen = screen, backArrow = backArrow, scrollBehavior = scrollBehavior)
+        }
+
+        Screen.MovieDetailsScreen -> {
+            LargeAppBar(screen = screen, backArrow = backArrow, scrollBehavior = scrollBehavior)
+        }
+
+        Screen.OnBoardingScreen -> {}
+
+        Screen.ResetPasswordScreen -> {
+            LargeAppBar(screen = screen, backArrow = backArrow, scrollBehavior = scrollBehavior)
+        }
+
+        Screen.SearchScreen -> {
+            LargeAppBar(screen = screen, backArrow = backArrow, scrollBehavior = scrollBehavior)
+        }
+
+        Screen.SeriesDetailsScreen -> {
+            LargeAppBar(screen = screen, backArrow = backArrow, scrollBehavior = scrollBehavior)
+        }
+
+        Screen.SignUpScreen -> {
+            LargeAppBar(screen = screen, backArrow = backArrow, scrollBehavior = scrollBehavior)
+        }
+
+        Screen.TrendingScreen -> {
+            LargeAppBar(screen = screen, backArrow = backArrow, scrollBehavior = scrollBehavior)
+        }
+
+        Screen.WatchlistRoute -> {}
+    }
+
 }

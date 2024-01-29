@@ -1,4 +1,20 @@
 <resources>
     <string name="app_name">Watchlist</string>
     <string name="search_query_empty_error">You have to type something na</string>
+
+    <!-- Validate Email-->
+    <string name="email_blank_error">Email can\'t be black</string>
+    <string name="email_contains_uppercase_error">Email must not contain upper-case letters</string>
+    <string name="email_format_invalid_error">That\'s not a valid email</string>
+
+    <!-- Validate Password-->
+    <string name="password_blank_error">Password cannot be empty</string>
+
+    <!-- Validate Name-->
+    <string name="name_blank_error">Name can\'t be black</string>
+    <string name="password_not_contain_letter_error">Must contain at least one letter (A-Z or a-z)</string>
+    <string name="password_less_that_8_error">Password cannot be less than 8 characters</string>
+    <string name="password_not_contain_number_error">Must contain at least one digit (0–9)</string>
+    <string name="password_not_contain_special_char_error">Must contain at least 1 special character</string>
+    <string name="password_contain_space_error">Must no contain spaces</string>
 </resources>

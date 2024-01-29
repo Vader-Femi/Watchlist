@@ -17,6 +17,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -47,6 +50,7 @@ import com.company.watchlist.ui.components.ErrorAlertDialog
 import java.util.Locale
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MovieDetailsScreen(
     movieId: Int,
@@ -56,6 +60,11 @@ fun MovieDetailsScreen(
 
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isLoading,
+        onRefresh = { movieDetailsEvent(MovieDetailsEvent.GetDetails) }
+    )
+
 
     LaunchedEffect(key1 = true) {
         movieDetailsEvent(MovieDetailsEvent.SetId(movieId))
@@ -69,10 +78,13 @@ fun MovieDetailsScreen(
     }
 
     Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top,
         modifier = Modifier
             .padding(10.dp, 0.dp, 10.dp, 0.dp)
-            .fillMaxWidth()
-            .verticalScroll(scrollState),
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .pullRefresh(pullRefreshState),
     ) {
         Column(
             verticalArrangement = Arrangement.Center

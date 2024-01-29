@@ -12,11 +12,8 @@ import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -31,7 +28,7 @@ import com.company.watchlist.R
 @Composable
 fun ErrorAlertDialog(
     errorText: String? = null,
-    retry: () -> Unit,
+    retry: (() -> Unit)? = null,
 ) {
 
     Box(
@@ -78,14 +75,16 @@ fun ErrorAlertDialog(
                             .fillMaxWidth()
                             .padding(0.dp, 5.dp, 0.dp, 20.dp),
                     )
-                    Button(
-                        onClick = retry,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .fillMaxWidth(),
-                        shape = AbsoluteRoundedCornerShape(12.dp)
-                    ) {
-                        Text(text = "Retry")
+                    retry?.let {
+                        Button(
+                            onClick = it,
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .fillMaxWidth(),
+                            shape = AbsoluteRoundedCornerShape(12.dp)
+                        ) {
+                            Text(text = "Retry")
+                        }
                     }
                 }
             },
