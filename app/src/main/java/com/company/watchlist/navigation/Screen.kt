@@ -1,6 +1,6 @@
 package com.company.watchlist.navigation
 
-sealed class Screen(val route: String, val name: String, val smallText: String? = null) {
+sealed class Screen(val route: String, var name: String, val smallText: String? = null) {
 
     data object AuthenticationRoute : Screen("authentication_route", "Authentication Route")
     data object OnBoardingScreen : Screen("on_boarding_screen", "OnBoarding")
@@ -12,8 +12,8 @@ sealed class Screen(val route: String, val name: String, val smallText: String? 
     data object WatchlistRoute : Screen("watchlist_route", "Watchlist Route")
     data object TrendingScreen : Screen("trending_screen", "Trending", "All the latest stuff")
     data object SearchScreen : Screen("search_screen", "Search", "What are you looking for?")
-    data object SeriesDetailsScreen : Screen("series_details_screen", "Series Details")
-    data object MovieDetailsScreen : Screen("movie_details_screen", "Movie Details")
+    data object SeriesDetailsScreen : Screen("series_details_screen", "Series")
+    data object MovieDetailsScreen : Screen("movie_details_screen", "Movie")
     data object FavouritesScreen : Screen("favourites_screen", "Favourites", "Your personal list")
 
     fun withArgs(vararg args: Pair<String, Int>): String {

@@ -18,6 +18,9 @@ import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -53,36 +56,43 @@ import com.company.watchlist.presentation.search.movies.SearchMovieEvent
 import com.company.watchlist.presentation.search.movies.SearchMovieState
 import com.company.watchlist.presentation.search.series.SearchSeriesEvent
 import com.company.watchlist.presentation.search.series.SearchSeriesState
+import com.company.watchlist.ui.components.MyPullRefreshIndicator
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun SearchSeriesScreen(
     searchMovieState: SearchMovieState,
     searchSeriesState: SearchSeriesState,
     onMovieEvent: (SearchMovieEvent) -> Unit,
     onSeriesEvent: (SearchSeriesEvent) -> Unit,
-    navigateToMovieDetails: (id :Int) -> Unit,
-    navigateToSeriesDetails: (id :Int) -> Unit
+    navigateToMovieDetails: (id: Int) -> Unit,
+    navigateToSeriesDetails: (id: Int) -> Unit,
 ) {
     val pagerState = rememberPageState()
     val coroutineScope = rememberCoroutineScope()
-    val moviePageIndex by remember { mutableIntStateOf(0) }
-    val seriesPageIndex by remember { mutableIntStateOf(1) }
     val movieList: LazyPagingItems<SearchMovieResult> =
         searchMovieState.searchResult.collectAsLazyPagingItems()
     val seriesList = searchSeriesState.searchResult.collectAsLazyPagingItems()
+    val moviePullRefreshState = rememberPullRefreshState(
+        refreshing = searchMovieState.isLoading,
+        onRefresh = { onMovieEvent(SearchMovieEvent.Search) })
+    val seriesPullRefreshState = rememberPullRefreshState(
+        refreshing = searchSeriesState.isLoading,
+        onRefresh = { onSeriesEvent(SearchSeriesEvent.Search) })
 
     Column(
-        modifier = Modifier.padding(15.dp, 0.dp, 15.dp, 0.dp)
+        modifier = Modifier
+            .padding(15.dp, 0.dp, 15.dp, 0.dp)
+//            .pullRefresh(moviePullRefreshState)
+//            .pullRefresh(seriesPullRefreshState),
     ) {
         TabRow(
-            selectedTabIndex = pagerState.currentPage,
-//            indicator = {}
+            selectedTabIndex = pagerState.currentPage
         ) {
             SearchTabCarousel.getItems().forEachIndexed { index, searchTabItem ->
                 TabHeader(
@@ -104,57 +114,48 @@ fun SearchSeriesScreen(
         ) { page ->
 
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pullRefresh(moviePullRefreshState)
+                    .pullRefresh(seriesPullRefreshState),
                 verticalArrangement = Arrangement.Top
             ) {
 
-                item {
-                    OutlinedTextField(
-                        value = if (page == moviePageIndex)
-                            searchMovieState.query else searchSeriesState.query,
-                        onValueChange = {
-                            if (page == moviePageIndex) onMovieEvent(
-                                SearchMovieEvent.SearchQueryChanged(
-                                    it
-                                )
-                            ) else onSeriesEvent(SearchSeriesEvent.SearchQueryChanged(it))
-                        },
-                        placeholder = { Text(text = if (page == moviePageIndex) "Search Movie" else "Search Series")},
-                        isError = if (page == moviePageIndex) searchMovieState.searchError != null else searchSeriesState.searchError != null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        maxLines = 1,
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Text,
-                            capitalization = KeyboardCapitalization.None,
-                            autoCorrect = false,
-                            imeAction = ImeAction.Search
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onSearch = {
-                                if (page == moviePageIndex) onMovieEvent(SearchMovieEvent.Search) else onSeriesEvent(
-                                    SearchSeriesEvent.Search
-                                )
-                            }
-                        )
-                    )
-                }
+                if (page == SearchTabCarousel.getItems()[0].index) {
 
-                item {
-                    if (if (page == moviePageIndex) searchMovieState.searchError != null else searchSeriesState.searchError != null) {
-                        Text(
-                            text = if (page == moviePageIndex) searchMovieState.searchError
-                                ?: "" else searchSeriesState.searchError ?: "",
-                            color = MaterialTheme.colorScheme.error,
+                    item {
+                        OutlinedTextField(
+                            value = searchMovieState.query,
+                            onValueChange = { onMovieEvent(SearchMovieEvent.SearchQueryChanged(it)) },
+                            placeholder = { Text(text = "Search Movie") },
+                            isError = searchMovieState.searchError != null,
                             modifier = Modifier
-                                .align(Alignment.End)
-                                .padding(8.dp)
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            maxLines = 1,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text,
+                                capitalization = KeyboardCapitalization.None,
+                                autoCorrect = false,
+                                imeAction = ImeAction.Search
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onSearch = { onMovieEvent(SearchMovieEvent.Search) }
+                            )
                         )
                     }
-                }
 
-                if (page == moviePageIndex) {
+                    item {
+                        if (searchMovieState.searchError != null) {
+                            Text(
+                                text = searchMovieState.searchError,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier
+                                    .align(Alignment.End)
+                                    .padding(8.dp)
+                            )
+                        }
+                    }
 
                     items(movieList) { movie ->
                         MovieItem(movie, navigateToMovieDetails)
@@ -169,9 +170,6 @@ fun SearchSeriesScreen(
 
                         is LoadState.Loading -> {
                             onMovieEvent(SearchMovieEvent.Loading(true))
-                            item {
-                                PagerProgressIndicator()
-                            }
                         }
 
                         is LoadState.NotLoading -> {
@@ -180,7 +178,41 @@ fun SearchSeriesScreen(
                     }
                 }
 
-                if (page == seriesPageIndex) {
+                if (page == SearchTabCarousel.getItems()[1].index) {
+
+                    item {
+                        OutlinedTextField(
+                            value = searchSeriesState.query,
+                            onValueChange = { onSeriesEvent(SearchSeriesEvent.SearchQueryChanged(it)) },
+                            placeholder = { Text(text = "Search Series") },
+                            isError = searchSeriesState.searchError != null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            maxLines = 1,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text,
+                                capitalization = KeyboardCapitalization.None,
+                                autoCorrect = false,
+                                imeAction = ImeAction.Search
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onSearch = { onSeriesEvent(SearchSeriesEvent.Search) }
+                            )
+                        )
+                    }
+
+                    item {
+                        if (searchSeriesState.searchError != null) {
+                            Text(
+                                text = searchSeriesState.searchError,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier
+                                    .align(Alignment.End)
+                                    .padding(8.dp)
+                            )
+                        }
+                    }
 
                     items(seriesList) { series ->
                         SeriesItem(series, navigateToSeriesDetails)
@@ -194,9 +226,6 @@ fun SearchSeriesScreen(
 
                         is LoadState.Loading -> {
                             onSeriesEvent(SearchSeriesEvent.Loading(true))
-                            item {
-                                PagerProgressIndicator()
-                            }
                         }
 
                         is LoadState.NotLoading -> {
@@ -207,6 +236,16 @@ fun SearchSeriesScreen(
 
 
             }
+
+            MyPullRefreshIndicator(
+                isLoading = searchMovieState.isLoading,
+                pullRefreshState = moviePullRefreshState
+            )
+
+            MyPullRefreshIndicator(
+                isLoading = searchSeriesState.isLoading,
+                pullRefreshState = seriesPullRefreshState
+            )
 
         }
     }
@@ -278,7 +317,7 @@ fun MovieItem(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 10.dp, bottom = 10.dp),
-                            text = "Average Rating: ${movie.vote_average}",
+                            text = "Average Rating: ${String.format("%.2f", movie.vote_average)}",
                             textAlign = TextAlign.Center
                         )
                     }
@@ -360,7 +399,7 @@ fun SeriesItem(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 10.dp, bottom = 10.dp),
-                            text = "Average Rating: ${series.vote_average}",
+                            text = "Average Rating: ${String.format("%.2f", series.vote_average)}",
                             textAlign = TextAlign.Center
                         )
                     }

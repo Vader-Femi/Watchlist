@@ -9,4 +9,5 @@ sealed class SignUpEvent{
 
     object Submit: SignUpEvent()
     object SignUpSuccessful: SignUpEvent()
+    object DismissError: SignUpEvent()
 }

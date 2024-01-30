@@ -7,4 +7,5 @@ sealed class LogInEvent{
 
     object Submit: LogInEvent()
     object LogInSuccessful: LogInEvent()
+    object DismissError: LogInEvent()
 }

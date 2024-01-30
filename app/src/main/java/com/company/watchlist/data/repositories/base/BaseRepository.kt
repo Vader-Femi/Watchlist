@@ -6,6 +6,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 interface BaseRepository{
 
+    val useDynamicTheme: Boolean
+
     fun getAuthReference(): FirebaseAuth
 
     fun getFirestoreReference(): FirebaseFirestore

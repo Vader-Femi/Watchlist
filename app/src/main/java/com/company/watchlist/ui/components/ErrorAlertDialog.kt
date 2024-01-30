@@ -28,6 +28,7 @@ import com.company.watchlist.R
 @Composable
 fun ErrorAlertDialog(
     errorText: String? = null,
+    onDismiss: (() -> Unit),
     retry: (() -> Unit)? = null,
 ) {
 
@@ -54,8 +55,8 @@ fun ErrorAlertDialog(
                     Image(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .fillMaxHeight(0.4f),
-                        painter = painterResource(id = R.drawable.inbox_cleanup_amico),
+                            .fillMaxHeight(0.25f),
+                        painter = painterResource(id = R.drawable.questions_amico),
                         contentDescription = "Error Image"
                     )
                     Text(
@@ -80,17 +81,27 @@ fun ErrorAlertDialog(
                             onClick = it,
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
+                                .padding(0.dp, 0.dp, 0.dp, 5.dp)
                                 .fillMaxWidth(),
                             shape = AbsoluteRoundedCornerShape(12.dp)
                         ) {
                             Text(text = "Retry")
                         }
                     }
+                    Button(
+                        onClick = onDismiss,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .fillMaxWidth(),
+                        shape = AbsoluteRoundedCornerShape(12.dp)
+                    ) {
+                        Text(text = "Dismiss")
+                    }
                 }
             },
             containerColor = MaterialTheme.colorScheme.surface,
             tonalElevation = 8.dp,
-            onDismissRequest = {}
+            onDismissRequest = onDismiss
         )
     }
 
@@ -99,7 +110,7 @@ fun ErrorAlertDialog(
 @Preview(showBackground = true)
 @Composable
 fun ErrorAlertDialogPreview() {
-    ErrorAlertDialog("You do not have network baba"){
+    ErrorAlertDialog("You do not have network baba", {}){
 
     }
 }

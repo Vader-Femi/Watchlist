@@ -19,7 +19,7 @@ object BottomNavBarData {
                 icon = Icons.Default.Search
             ),
             BottomBarItem(
-                name = "Watchlist",
+                name = "Favourite",
                 route = Screen.FavouritesScreen.route,
                 icon = Icons.Default.Favorite
             ))

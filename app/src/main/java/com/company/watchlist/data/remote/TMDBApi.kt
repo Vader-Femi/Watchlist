@@ -37,14 +37,14 @@ interface TMDBApi {
 
     @GET("/3/movie/{movie_id}?")
     suspend fun getMovieDetails(
-        @Path("movie_id") movieId: Int,
+        @Path("movie_id") movieId: Long,
         @Query("api_key") query: String = BuildConfig.TMDB_API_KEY,
         @Query("language") language: String = "en-UK",
     ): MovieDetailsResponse
 
     @GET("/3/tv/{series_id}?")
     suspend fun getSeriesDetails(
-        @Path("series_id") seriesId: Int,
+        @Path("series_id") seriesId: Long,
         @Query("api_key") query: String = BuildConfig.TMDB_API_KEY,
         @Query("language") language: String = "en-UK",
     ): SeriesDetailsResponse

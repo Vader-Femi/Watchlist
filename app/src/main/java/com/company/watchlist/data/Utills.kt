@@ -3,8 +3,18 @@ package com.company.watchlist.data
 import android.content.Context
 import android.widget.Toast
 
-const val FAVOURITES_MOVIES = "FAVOURITES_MOVIES"
-const val FAVOURITES_SERIES = "FAVOURITES_SERIES"
+enum class ListType{
+    FAVOURITESMOVIES,
+    FAVOURITESSERIES
+}
+
+enum class ListFields{
+    ID,
+    NAME,
+    POSTERPATH,
+    AVERAGERATING
+}
+
 fun Context.handleNetworkExceptions(
     exception: Exception? = null,
     message: String? = null

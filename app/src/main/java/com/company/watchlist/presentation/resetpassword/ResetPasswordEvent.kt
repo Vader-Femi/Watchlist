@@ -6,4 +6,5 @@ sealed class ResetPasswordEvent{
     object Submit: ResetPasswordEvent()
 
     object ResetPasswordSuccessful: ResetPasswordEvent()
+    object DismissError: ResetPasswordEvent()
 }

@@ -86,7 +86,7 @@ fun OnBoardingScreen(
             AnimatedVisibility(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(40.dp, 20.dp, 40.dp, 0.dp),
+                    .padding(40.dp, 15.dp, 40.dp, 0.dp),
                 visible = pagerState.currentPage == 2,
             ) {
                 OutlinedButton(

@@ -29,7 +29,7 @@ open class BaseViewModel @Inject constructor(
         }
     }
 
-    val useDynamicTheme = true
+    val useDynamicTheme = repository.useDynamicTheme
 
     fun logOut(){
         viewModelScope.launch {

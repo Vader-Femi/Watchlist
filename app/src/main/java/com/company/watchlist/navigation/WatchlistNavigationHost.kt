@@ -1,5 +1,6 @@
 package com.company.watchlist.navigation
 
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -20,6 +21,7 @@ import com.company.watchlist.ui.trending.TrendingScreen
 import com.company.watchlist.ui.favourites.FavouritesScreen
 import com.company.watchlist.viewmodels.WatchlistViewModel
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WatchlistNavigationHost(
     trendingState: TrendingState,
@@ -27,7 +29,7 @@ fun WatchlistNavigationHost(
     searchSeriesState: SearchSeriesState,
     movieDetailsState: MovieDetailsState,
     seriesDetailsState: SeriesDetailsState,
-    watchlistState: FavouritesState,
+    favouritesState: FavouritesState,
     viewModel: WatchlistViewModel,
     navController: NavHostController
 ) {
@@ -147,7 +149,29 @@ fun WatchlistNavigationHost(
         }
 
         composable(route = Screen.FavouritesScreen.route) {
-            FavouritesScreen(watchlistState) {}
+            FavouritesScreen(
+                state = favouritesState,
+                onEvent = {viewModel.onEvent(it)},
+                navigateToMovieDetails = {
+                    navController.navigate(
+                        Screen.MovieDetailsScreen.withArgs(
+                            Pair("movie_id", it)
+                        )
+                    ) {
+                        popUpTo(Screen.SearchScreen.route)
+                        launchSingleTop = true
+                    }
+                },
+                navigateToSeriesDetails = {
+                    navController.navigate(
+                        Screen.SeriesDetailsScreen.withArgs(
+                            Pair("series_id", it)
+                        )
+                    ) {
+                        popUpTo(Screen.SearchScreen.route)
+                        launchSingleTop = true
+                    }
+                } )
             viewModel.onEvent(
                 AppBarEvent.AppbarChanged(
                     Screen.FavouritesScreen

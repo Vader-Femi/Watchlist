@@ -67,11 +67,11 @@ class WatchlistRepositoryImpl @Inject constructor(
         }.flow
     }
 
-    override suspend fun getMovieDetails(movieId: Int) = safeApiCall {
+    override suspend fun getMovieDetails(movieId: Long) = safeApiCall {
         api.getMovieDetails(movieId)
     }
 
-    override suspend fun getSeriesDetails(movieId: Int) = safeApiCall {
+    override suspend fun getSeriesDetails(movieId: Long) = safeApiCall {
         api.getSeriesDetails(movieId)
     }
 

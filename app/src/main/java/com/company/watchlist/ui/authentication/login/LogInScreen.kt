@@ -65,7 +65,8 @@ fun LogInScreen(
     ) {
 
         if (state.loadingError != null) {
-            ErrorAlertDialog(state.loadingError)
+            ErrorAlertDialog(state.loadingError, { onEvent(LogInEvent.DismissError) }) {
+                onEvent(LogInEvent.Submit)}
         }
 
         LaunchedEffect(key1 = logInChannelEvents) {

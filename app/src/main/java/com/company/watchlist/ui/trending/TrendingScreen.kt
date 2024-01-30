@@ -25,6 +25,7 @@ import com.company.watchlist.data.remote.response.trending.TrendingResult
 import com.company.watchlist.presentation.trending.TrendingEvent
 import com.company.watchlist.presentation.trending.TrendingState
 import com.company.watchlist.ui.components.ErrorAlertDialog
+import com.company.watchlist.ui.components.MyPullRefreshIndicator
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -32,7 +33,7 @@ fun TrendingScreen(
     state: TrendingState,
     trendingEvent: (TrendingEvent) -> Unit,
     navigateToMovieDetails: (id: Int) -> Unit,
-    navigateToSeriesDetails: (id: Int) -> Unit,
+    navigateToSeriesDetails: (id: Int) -> Unit
 ) {
 
     val pullRefreshState = rememberPullRefreshState(
@@ -41,13 +42,14 @@ fun TrendingScreen(
     )
 
     if (state.error != null) {
-        ErrorAlertDialog(state.error) {
+        ErrorAlertDialog(state.error, {trendingEvent(TrendingEvent.DismissError)}) {
             trendingEvent(TrendingEvent.GetTrending)
         }
     }
 
     LazyColumn(
         modifier = Modifier
+            .padding(10.dp, 8.dp, 10.dp, 0.dp)
             .fillMaxSize()
             .pullRefresh(pullRefreshState)
     ) {
@@ -138,7 +140,7 @@ fun TrendingScreen(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(top = 5.dp),
-                                        text = "Average Rating: ${trendingItem.vote_average}",
+                                        text = "Average Rating: ${String.format("%.2f", trendingItem.vote_average)}",
                                         textAlign = TextAlign.Center
                                     )
                                 }
@@ -155,6 +157,11 @@ fun TrendingScreen(
             }
         }
     }
+
+    MyPullRefreshIndicator(
+        isLoading = state.isLoading,
+        pullRefreshState = pullRefreshState
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)

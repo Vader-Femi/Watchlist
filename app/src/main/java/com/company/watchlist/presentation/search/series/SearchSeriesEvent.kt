@@ -9,4 +9,5 @@ sealed class SearchSeriesEvent {
     data class Loading(val loading: Boolean): SearchSeriesEvent()
 
     object Search: SearchSeriesEvent()
+    object DismissError: SearchSeriesEvent()
 }

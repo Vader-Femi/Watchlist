@@ -14,6 +14,6 @@ interface WatchlistRepository {
     suspend fun getTrending(): Resource<TrendingResponse>
     fun searchMovies(query: String): Flow<PagingData<SearchMovieResult>>
     fun searchSeries(query: String): Flow<PagingData<SearchSeriesResult>>
-    suspend fun getMovieDetails(movieId: Int): Resource<MovieDetailsResponse>
-    suspend fun getSeriesDetails(movieId: Int): Resource<SeriesDetailsResponse>
+    suspend fun getMovieDetails(movieId: Long): Resource<MovieDetailsResponse>
+    suspend fun getSeriesDetails(movieId: Long): Resource<SeriesDetailsResponse>
 }

@@ -1,8 +1,6 @@
 package com.company.watchlist.viewmodels
 
 import androidx.lifecycle.viewModelScope
-import com.company.watchlist.data.FAVOURITES_MOVIES
-import com.company.watchlist.data.FAVOURITES_SERIES
 import com.company.watchlist.data.repositories.authentication.AuthenticationRepositoryImpl
 import com.company.watchlist.presentation.login.LogInEvent
 import com.company.watchlist.presentation.login.LogInState
@@ -14,7 +12,6 @@ import com.company.watchlist.use_case.ValidateEmail
 import com.company.watchlist.use_case.ValidateLogInPassword
 import com.company.watchlist.use_case.ValidateName
 import com.company.watchlist.use_case.ValidateSignUpPassword
-import com.google.firebase.firestore.FieldValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -88,12 +85,17 @@ class AuthenticationViewModel @Inject constructor(
                 }
             }
 
-            SignUpEvent.SignUpSuccessful -> {
+            is SignUpEvent.SignUpSuccessful -> {
                 signUpState.update {
                     SignUpState()
                 }
             }
 
+            is SignUpEvent.DismissError -> {
+                signUpState.update {
+                    it.copy(loadingError = null)
+                }
+            }
         }
     }
 
@@ -121,12 +123,17 @@ class AuthenticationViewModel @Inject constructor(
                 }
             }
 
-            LogInEvent.LogInSuccessful -> {
+            is LogInEvent.LogInSuccessful -> {
                 logInState.update {
                     LogInState()
                 }
             }
 
+            is LogInEvent.DismissError -> {
+                logInState.update {
+                    it.copy(loadingError = null)
+                }
+            }
         }
     }
 
@@ -142,9 +149,15 @@ class AuthenticationViewModel @Inject constructor(
                 resetPassword()
             }
 
-            ResetPasswordEvent.ResetPasswordSuccessful -> {
+            is ResetPasswordEvent.ResetPasswordSuccessful -> {
                 resetPasswordState.update {
                     ResetPasswordState()
+                }
+            }
+
+            is ResetPasswordEvent.DismissError -> {
+                resetPasswordState.update {
+                    it.copy(loadingError = null)
                 }
             }
         }
@@ -191,6 +204,9 @@ class AuthenticationViewModel @Inject constructor(
             .addOnCompleteListener { addUserTask ->
                 if (addUserTask.isSuccessful) {
                     viewModelScope.launch {
+                        signUpState.update {
+                            it.copy(isLoading = false, loadingError = null)
+                        }
                         logIn()
                         signUpChannel.send(SignUpEvent.SignUpSuccessful)
                     }
@@ -208,67 +224,7 @@ class AuthenticationViewModel @Inject constructor(
             }
     }
 
-    private fun addMovieToFavourites(
-        movieId: Int,
-        movieName: String,
-    ) {
 
-        repository.getFirestoreReference()
-            .collection(repository.getAuthReference().uid.toString())
-            .document(FAVOURITES_MOVIES)
-            .set(hashMapOf(movieName to movieId))
-            .addOnSuccessListener {
-                //Todo
-            }.addOnFailureListener {
-                //Todo
-            }
-    }
-
-    private fun addSeriesToFavourites(
-        seriesId: Int,
-        seriesName: String,
-    ) {
-
-        repository.getFirestoreReference()
-            .collection(repository.getAuthReference().uid.toString())
-            .document(FAVOURITES_SERIES)
-            .set(hashMapOf(seriesName to seriesId))
-            .addOnSuccessListener {
-                //Todo
-            }.addOnFailureListener {
-                //Todo
-            }
-    }
-
-    private fun removeMovieFromFavourites(
-        movieName: String,
-    ) {
-
-        repository.getFirestoreReference()
-            .collection(repository.getAuthReference().uid.toString())
-            .document(FAVOURITES_MOVIES)
-            .update(mapOf(movieName to FieldValue.delete()))
-            .addOnSuccessListener {
-                //Todo
-            }.addOnFailureListener {
-                //Todo
-            }
-    }
-
-    private fun removeSeriesFromFavourites(
-        seriesName: String,
-    ) {
-
-        repository.getFirestoreReference()
-            .collection(repository.getAuthReference().uid.toString())
-            .document(FAVOURITES_SERIES)
-            .update(mapOf(seriesName to FieldValue.delete()))
-            .addOnSuccessListener {
-                //Todo
-            }.addOnFailureListener {
-                //Todo
-            }
-    }
 
     private fun logIn() {
 
@@ -304,7 +260,7 @@ class AuthenticationViewModel @Inject constructor(
                 if (addUserTask.isSuccessful) {
                     viewModelScope.launch {
                         logInState.update {
-                            it.copy(isLoading = false)
+                            it.copy(isLoading = false, loadingError = null)
                         }
                         logInChannel.send(LogInEvent.LogInSuccessful)
                     }
@@ -354,11 +310,14 @@ class AuthenticationViewModel @Inject constructor(
                     viewModelScope.launch {
                         resetPasswordChannel.send(ResetPasswordEvent.ResetPasswordSuccessful)
                     }
+                    resetPasswordState.update {
+                        it.copy(isLoading = false, loadingError = null)
+                    }
                 } else {
                     viewModelScope.launch {
                         resetPasswordState.update {
                             it.copy(
-                                isLoading = true,
+                                isLoading = false,
                                 loadingError = sendResetPasswordTask.exception?.toString()
                                     ?: "Something went wrong 😪"
                             )

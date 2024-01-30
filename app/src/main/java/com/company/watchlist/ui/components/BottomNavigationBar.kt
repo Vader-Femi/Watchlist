@@ -50,9 +50,7 @@ fun BottomNavigationBar(
                     )
                 },
                 alwaysShowLabel = true,
-                colors = NavigationBarItemDefaults.colors(
-
-                )
+                colors = NavigationBarItemDefaults.colors()
             )
 
         }

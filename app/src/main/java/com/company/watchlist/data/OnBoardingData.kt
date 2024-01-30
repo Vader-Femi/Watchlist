@@ -6,19 +6,19 @@ object OnBoardingData {
     fun getItems(): List<OnBoardingItem> {
         return listOf(
             OnBoardingItem(
-                R.drawable.telecommuting_rafiki,
+                R.drawable.movie_night_rafiki,
                 "Loren Ipson",
                 "Just some random words, iono what to put yet"
             ),
             OnBoardingItem(
-                R.drawable.telecommuting_rafiki,
+                R.drawable.research_paper_pana,
                 "Loren Ipson",
-                "Just some more random words, iono what to put yet"
+                "Get vital details about interesting movies and tv series"
             ),
             OnBoardingItem(
-                R.drawable.telecommuting_rafiki,
+                R.drawable.todo_list_rafiki,
                 "Loren Ipson",
-                "Some more final random words, iono what to put yet"
+                "All your favourite movies and tv series in one place"
             )
         )
     }

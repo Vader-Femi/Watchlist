@@ -63,7 +63,9 @@ fun SignUpScreen(
             .padding(10.dp, 0.dp, 10.dp, 0.dp)
     ) {
         if (state.loadingError != null) {
-            ErrorAlertDialog(state.loadingError)
+            ErrorAlertDialog(state.loadingError, {onEvent(SignUpEvent.DismissError)}){
+                onEvent(SignUpEvent.Submit)
+            }
         }
 
         LaunchedEffect(key1 = signUpChannelEvents) {

@@ -7,7 +7,7 @@ import com.company.watchlist.data.remote.response.details.series.Season
 import com.company.watchlist.data.remote.response.details.series.SpokenLanguage
 
 data class SeriesDetailsState(
-    val id: Int? = -1,
+    val id: Long? = -1,
     val firstAirDate: String? = "",
     val lastAirDate: String? = "",
     val homepage: String? = "",

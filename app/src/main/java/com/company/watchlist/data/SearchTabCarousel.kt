@@ -8,10 +8,12 @@ object SearchTabCarousel {
     fun getItems(): List<SearchTabItem> {
         return listOf(
             SearchTabItem(
+                index = 0,
                 name = "Movies",
                 icon = Icons.Default.List
             ),
             SearchTabItem(
+                index = 1,
                 name = "Series",
                 icon = Icons.Default.List
             )
@@ -19,6 +21,7 @@ object SearchTabCarousel {
     }
 
     data class SearchTabItem(
+        val index: Int,
         val name: String,
         val icon: ImageVector
     )

@@ -6,4 +6,5 @@ sealed class SearchMovieEvent {
     data class Loading(val loading: Boolean): SearchMovieEvent()
 
     object Search: SearchMovieEvent()
+    object DismissError: SearchMovieEvent()
 }

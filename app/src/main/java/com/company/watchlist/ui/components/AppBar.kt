@@ -25,7 +25,7 @@ fun AppBar(
         }
 
         Screen.MovieDetailsScreen -> {
-            LargeAppBar(screen = screen, backArrow = backArrow, scrollBehavior = scrollBehavior)
+            TopAppBar(screen = screen, backArrow = backArrow)
         }
 
         Screen.OnBoardingScreen -> {}
@@ -35,11 +35,11 @@ fun AppBar(
         }
 
         Screen.SearchScreen -> {
-            LargeAppBar(screen = screen, backArrow = backArrow, scrollBehavior = scrollBehavior)
+            TopAppBar(screen = screen, backArrow = backArrow)
         }
 
         Screen.SeriesDetailsScreen -> {
-            LargeAppBar(screen = screen, backArrow = backArrow, scrollBehavior = scrollBehavior)
+            TopAppBar(screen = screen, backArrow = backArrow)
         }
 
         Screen.SignUpScreen -> {

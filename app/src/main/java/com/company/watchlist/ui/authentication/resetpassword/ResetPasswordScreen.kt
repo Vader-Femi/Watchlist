@@ -63,7 +63,9 @@ fun ResetPasswordScreen(
     ) {
 
         if (state.loadingError != null) {
-            ErrorAlertDialog(state.loadingError)
+            ErrorAlertDialog(state.loadingError, {onEvent(ResetPasswordEvent.DismissError)}){
+                onEvent(ResetPasswordEvent.Submit)
+            }
         }
 
 

@@ -8,7 +8,7 @@ data class MovieDetailsState(
     val budget: Int? = -1,
     val genres: List<Genre> = emptyList(),
     val homepage: String? = "",
-    val id: Int? = -1,
+    val id: Long? = -1,
     val original_language: String? = "",
     val original_title: String? = "",
     val overview: String? = "",

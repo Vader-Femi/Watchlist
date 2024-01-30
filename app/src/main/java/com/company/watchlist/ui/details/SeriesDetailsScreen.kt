@@ -11,11 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -47,16 +46,16 @@ import com.company.watchlist.data.remote.response.details.series.SpokenLanguage
 import com.company.watchlist.presentation.details.series.SeriesDetailsEvent
 import com.company.watchlist.presentation.details.series.SeriesDetailsState
 import com.company.watchlist.ui.components.ErrorAlertDialog
+import com.company.watchlist.ui.components.MyPullRefreshIndicator
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SeriesDetailsScreen(
     seriesId: Int,
     state: SeriesDetailsState,
-    seriesDetailsEvent: (SeriesDetailsEvent) -> Unit,
+    seriesDetailsEvent: (SeriesDetailsEvent) -> Unit
 ) {
 
-    val scrollState = rememberScrollState()
     val context = LocalContext.current
     val pullRefreshState = rememberPullRefreshState(
         refreshing = state.isLoading,
@@ -64,603 +63,636 @@ fun SeriesDetailsScreen(
     )
 
     LaunchedEffect(key1 = true) {
-        seriesDetailsEvent(SeriesDetailsEvent.SetId(seriesId))
+        seriesDetailsEvent(SeriesDetailsEvent.SetId(seriesId.toLong()))
         seriesDetailsEvent(SeriesDetailsEvent.GetDetails)
     }
 
     if (state.error != null) {
-        ErrorAlertDialog(state.error) {
+        ErrorAlertDialog(state.error, {seriesDetailsEvent(SeriesDetailsEvent.DismissError)}) {
             seriesDetailsEvent(SeriesDetailsEvent.GetDetails)
         }
     }
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .padding(10.dp, 8.dp, 10.dp, 0.dp)
             .fillMaxWidth()
-            .verticalScroll(scrollState)
             .pullRefresh(pullRefreshState),
     ) {
-        Column(
-            verticalArrangement = Arrangement.Center
-        ) {
-
-            Row {
-                AsyncImage(
-                    modifier = Modifier
-                        .fillMaxSize(0.4f)
-                        .padding(8.dp),
-                    model = "https://image.tmdb.org/t/p/w500/${state.posterPath}",
-                    contentDescription = "${state.name} Poster"
-                )
-                Column(
-                    modifier = Modifier
-                        .padding(10.dp)
-                        .align(Alignment.CenterVertically),
-                    verticalArrangement = Arrangement.Center
-                ) {
-
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 5.dp, bottom = 5.dp),
-                        text = state.name ?: "",
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.tertiary
-                    )
-
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp, bottom = 10.dp),
-                        text = "First aired ${state.firstAirDate}",
-                        textAlign = TextAlign.Center
-                    )
-
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp, bottom = 10.dp),
-                        text = "Last aired ${state.lastAirDate}",
-                        textAlign = TextAlign.Center
-                    )
-
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp, bottom = 10.dp),
-                        text = "Original language: ${state.originalLanguage?.uppercase()}",
-                        textAlign = TextAlign.Center
-                    )
-
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 10.dp, bottom = 10.dp),
-                        text = "Average Rating: ${state.voteAverage}",
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-
-        }
-
-        Text(
-            text = state.overview ?: "",
-            color = MaterialTheme.colorScheme.outline,
-            textAlign = TextAlign.Left
-        )
-
-        Divider(
-            modifier = Modifier
-                .height(2.dp)
-                .fillMaxWidth()
-        )
-
-        if (state.originalName != state.name) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 10.dp),
-                text = "Original Title: ${state.originalName}",
-                textAlign = TextAlign.Left
-            )
-        }
-
-        if (state.tagline?.isNotBlank() == true) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 10.dp),
-                text = "Tagline: ${state.tagline}",
-                textAlign = TextAlign.Left,
-                color = MaterialTheme.colorScheme.tertiary
-            )
-        }
-
-        if (state.numberOfSeasons != 0) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 10.dp),
-                text = "Number of Seasons: ${state.numberOfSeasons}",
-                textAlign = TextAlign.Left
-            )
-        }
-
-        if (state.numberOfEpisodes != 0) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 10.dp),
-                text = "Number of Episodes: ${state.numberOfEpisodes}",
-                textAlign = TextAlign.Left
-            )
-        }
-
-        if (state.lastEpisodeToAir != null) {
-            Divider(
-                modifier = Modifier
-                    .height(2.dp)
-                    .fillMaxWidth()
-            )
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 10.dp),
-                text = "Last Episode to Air",
-                textAlign = TextAlign.Left,
-                color = MaterialTheme.colorScheme.tertiary
-            )
-            Card(
-                modifier = Modifier
-                    .padding(10.dp, 8.dp, 10.dp, 8.dp)
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp)
+        item {
+            Column(
+                verticalArrangement = Arrangement.Center
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(12.dp),
-                ) {
+
+                Row {
+                    AsyncImage(
+                        modifier = Modifier
+                            .fillMaxSize(0.4f)
+                            .padding(8.dp),
+                        model = "https://image.tmdb.org/t/p/w500/${state.posterPath}",
+                        contentDescription = "${state.name} Poster"
+                    )
                     Column(
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .align(Alignment.CenterVertically),
                         verticalArrangement = Arrangement.Center
                     ) {
 
-                        Row {
-                            AsyncImage(
-                                modifier = Modifier
-                                    .fillMaxSize(0.4f)
-                                    .align(Alignment.CenterVertically)
-                                    .padding(4.dp),
-                                model = "https://image.tmdb.org/t/p/w500/${state.lastEpisodeToAir.still_path}",
-                                contentDescription = "Last Episode to Air Poster"
-                            )
-                            Column(
-                                modifier = Modifier
-                                    .padding(10.dp),
-                                verticalArrangement = Arrangement.Center
-                            ) {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 5.dp, bottom = 5.dp),
+                            text = state.name ?: "",
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
 
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 5.dp, bottom = 5.dp),
-                                    text = state.lastEpisodeToAir.name,
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.tertiary
-                                )
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp, bottom = 10.dp),
+                            text = "First aired ${state.firstAirDate}",
+                            textAlign = TextAlign.Center
+                        )
 
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 5.dp, bottom = 5.dp),
-                                    text = "Air Date: ${state.lastEpisodeToAir.air_date}",
-                                    textAlign = TextAlign.Center
-                                )
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp, bottom = 10.dp),
+                            text = "Last aired ${state.lastAirDate}",
+                            textAlign = TextAlign.Center
+                        )
 
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 5.dp, bottom = 5.dp),
-                                    text = "Season ${state.lastEpisodeToAir.season_number} Episode ${state.lastEpisodeToAir.episode_number}",
-                                    textAlign = TextAlign.Center
-                                )
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp, bottom = 10.dp),
+                            text = "Original language: ${state.originalLanguage?.uppercase()}",
+                            textAlign = TextAlign.Center
+                        )
 
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 5.dp, bottom = 5.dp),
-                                    text = "${state.lastEpisodeToAir.episode_type.replaceFirstChar { it.uppercaseChar() }} Episode",
-                                    textAlign = TextAlign.Center
-                                )
-
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 5.dp, bottom = 5.dp),
-                                    text = "Average Rating: ${state.lastEpisodeToAir.vote_average}",
-                                    textAlign = TextAlign.Center
-                                )
-
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 5.dp, bottom = 5.dp),
-                                    text = "Runtime: ${state.lastEpisodeToAir.runtime} Minutes",
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                        }
-
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp, bottom = 10.dp),
+                            text = "Average Rating: ${String.format("%.2f", state.voteAverage)}",
+                            textAlign = TextAlign.Center
+                        )
                     }
-
-                    Text(
-                        text = state.lastEpisodeToAir.overview,
-                        color = MaterialTheme.colorScheme.outline
-                    )
                 }
 
             }
-            Divider(
-                modifier = Modifier
-                    .height(2.dp)
-                    .fillMaxWidth()
-            )
         }
 
-        if (state.nextEpisodeToAir != null) {
-            Divider(
-                modifier = Modifier
-                    .height(2.dp)
-                    .fillMaxWidth()
-            )
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 10.dp),
-                text = "Next Episode to Air",
-                textAlign = TextAlign.Left,
-                color = MaterialTheme.colorScheme.tertiary
-            )
-            Card(
-                modifier = Modifier
-                    .padding(10.dp, 8.dp, 10.dp, 8.dp)
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(10.dp)
-            ) {
-
-                Column(
-                    modifier = Modifier
-                        .padding(12.dp),
-                ) {
-                    Column(
-                        verticalArrangement = Arrangement.Center
-                    ) {
-
-                        Row {
-                            AsyncImage(
-                                modifier = Modifier
-                                    .fillMaxSize(0.4f)
-                                    .align(Alignment.CenterVertically)
-                                    .padding(4.dp),
-                                model = "https://image.tmdb.org/t/p/w500/${state.nextEpisodeToAir.still_path}",
-                                contentDescription = "Next Episode to Air Poster"
-                            )
-                            Column(
-                                modifier = Modifier
-                                    .padding(10.dp),
-                                verticalArrangement = Arrangement.Center
-                            ) {
-
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 5.dp, bottom = 5.dp),
-                                    text = state.nextEpisodeToAir.name,
-                                    textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.tertiary
-                                )
-
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 5.dp, bottom = 5.dp),
-                                    text = "Air Date: ${state.nextEpisodeToAir.air_date}",
-                                    textAlign = TextAlign.Center
-                                )
-
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 5.dp, bottom = 5.dp),
-                                    text = "Season ${state.nextEpisodeToAir.season_number} Episode ${state.nextEpisodeToAir.episode_number}",
-                                    textAlign = TextAlign.Center
-                                )
-
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 5.dp, bottom = 5.dp),
-                                    text = "${state.nextEpisodeToAir.episode_type} Episode",
-                                    textAlign = TextAlign.Center
-                                )
-
-                                if (state.nextEpisodeToAir.vote_average != 0) {
-                                    Text(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(top = 5.dp, bottom = 5.dp),
-                                        text = "Average Rating: ${state.nextEpisodeToAir.vote_average}",
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
-
-                                if (state.nextEpisodeToAir.runtime != 0) {
-                                    Text(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(top = 5.dp, bottom = 5.dp),
-                                        text = "Runtime: ${state.nextEpisodeToAir.runtime}",
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
-                            }
-                        }
-
-                    }
-
-                    Text(
-                        text = state.nextEpisodeToAir.overview,
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                }
-
-            }
-            Divider(
-                modifier = Modifier
-                    .height(2.dp)
-                    .fillMaxWidth()
-            )
-        }
-
-        if (state.homepage?.isNotBlank() == true) {
-
-            val annotatedText = buildAnnotatedString {
-                pushStringAnnotation(
-                    tag = "Homepage",
-                    annotation = state.homepage
-                )
-
-                withStyle(
-                    style = SpanStyle(
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 15.sp,
-                    ),
-                ) {
-                    append("Homepage: ")
-                }
-
-                withStyle(
-                    style = SpanStyle(
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 15.sp,
-                    ),
-                ) {
-                    append(state.homepage)
-                }
-
-                pop()
-            }
-            ClickableText(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 10.dp),
-                text = annotatedText,
-                style = TextStyle.Default.copy(
+        item {
+            if (state.overview?.isNotEmpty() == true)
+                Text(
+                    text = state.overview,
+                    color = MaterialTheme.colorScheme.outline,
                     textAlign = TextAlign.Left
-                ),
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-                onClick = { offset ->
-                    annotatedText.getStringAnnotations(
-                        tag = "Homepage",
-                        start = offset,
-                        end = offset
-                    )
-                        .firstOrNull()?.let {
-                            val homepageIntent = Intent(Intent.ACTION_VIEW)
-                            homepageIntent.setData(Uri.parse(state.homepage))
-                            context.startActivity(homepageIntent)
-                        }
-                }
-            )
+                )
         }
 
-        if (state.genres.isNotEmpty()) {
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                item {
-                    Text(
-                        text = "Genre(s)"
-                    )
-                }
-
-                state.genres.forEach { genres ->
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .padding(2.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(12.dp),
-                                    shape = RoundedCornerShape(12.dp)
-                                )
-                                .clip(RoundedCornerShape(12.dp))
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(7.dp, 3.dp, 7.dp, 3.dp),
-                                text = genres.name,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
-                }
-
-            }
-        }
-
-        if (state.languages.isNotEmpty()) {
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                item {
-                    Text(
-                        text = "Language(s)"
-                    )
-                }
-
-                state.languages.forEach { language ->
-                    item {
-                        Box(
-                            modifier = Modifier
-                                .padding(2.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(12.dp),
-                                    shape = RoundedCornerShape(12.dp)
-                                )
-                                .clip(RoundedCornerShape(12.dp))
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(7.dp, 3.dp, 7.dp, 3.dp),
-                                text = language.replaceFirstChar { it.uppercaseChar() },
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    }
-                }
-
-            }
-        }
-
-        if (state.seasons.isNotEmpty()) {
+        item {
             Divider(
                 modifier = Modifier
                     .height(2.dp)
                     .fillMaxWidth()
             )
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 10.dp),
-                text = "All Seasons",
-                textAlign = TextAlign.Left,
-                color = MaterialTheme.colorScheme.tertiary
-            )
+        }
 
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp, bottom = 10.dp),
-                verticalAlignment = Alignment.Top
-            ) {
-                state.seasons.forEach { season ->
-                    item {
-                        Card(
-                            modifier = Modifier
-                                .padding(10.dp, 8.dp, 10.dp, 8.dp)
-                                .fillMaxWidth(),
-                            shape = RoundedCornerShape(10.dp)
+        item {
+            if (state.originalName != state.name) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 10.dp),
+                    text = "Original Title: ${state.originalName}",
+                    textAlign = TextAlign.Left
+                )
+            }
+        }
+
+        item {
+            if (state.tagline?.isNotBlank() == true) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 10.dp),
+                    text = "Tagline: ${state.tagline}",
+                    textAlign = TextAlign.Left,
+                    color = MaterialTheme.colorScheme.tertiary
+                )
+            }
+        }
+
+        item {
+            if (state.numberOfSeasons != 0) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 10.dp),
+                    text = "Number of Seasons: ${state.numberOfSeasons}",
+                    textAlign = TextAlign.Left
+                )
+            }
+        }
+
+        item {
+            if (state.numberOfEpisodes != 0) {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 10.dp),
+                    text = "Number of Episodes: ${state.numberOfEpisodes}",
+                    textAlign = TextAlign.Left
+                )
+            }
+        }
+
+        item {
+            if (state.lastEpisodeToAir != null) {
+                Divider(
+                    modifier = Modifier
+                        .height(2.dp)
+                        .fillMaxWidth()
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 10.dp),
+                    text = "Last Episode to Air",
+                    textAlign = TextAlign.Left,
+                    color = MaterialTheme.colorScheme.tertiary
+                )
+                Card(
+                    modifier = Modifier
+                        .padding(10.dp, 8.dp, 10.dp, 8.dp)
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(12.dp),
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.Center
                         ) {
 
-                            Column(
-                                modifier = Modifier
-                                    .padding(12.dp),
-                            ) {
+                            Row {
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .fillMaxSize(0.4f)
+                                        .align(Alignment.CenterVertically)
+                                        .padding(4.dp),
+                                    model = "https://image.tmdb.org/t/p/w500/${state.lastEpisodeToAir.still_path}",
+                                    contentDescription = "Last Episode to Air Poster"
+                                )
                                 Column(
+                                    modifier = Modifier
+                                        .padding(10.dp),
                                     verticalArrangement = Arrangement.Center
                                 ) {
-                                    Row {
-                                        AsyncImage(
-                                            modifier = Modifier
-                                                .fillMaxSize(0.4f)
-                                                .padding(8.dp),
-                                            model = "https://image.tmdb.org/t/p/w500/${season.poster_path}",
-                                            contentDescription = "Season ${season.season_number} Poster"
-                                        )
-                                        Column(
-                                            modifier = Modifier
-                                                .padding(10.dp)
-                                                .align(Alignment.CenterVertically),
-                                            verticalArrangement = Arrangement.Center
-                                        ) {
 
-                                            Text(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(top = 5.dp, bottom = 5.dp),
-                                                text = season.name,
-                                                textAlign = TextAlign.Center
-                                            )
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 5.dp, bottom = 5.dp),
+                                        text = state.lastEpisodeToAir.name,
+                                        textAlign = TextAlign.Center,
+                                        color = MaterialTheme.colorScheme.tertiary
+                                    )
 
-                                            Text(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(top = 5.dp, bottom = 5.dp),
-                                                text = "Season Number: ${season.season_number}",
-                                                textAlign = TextAlign.Center
-                                            )
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 5.dp, bottom = 5.dp),
+                                        text = "Air Date: ${state.lastEpisodeToAir.air_date}",
+                                        textAlign = TextAlign.Center
+                                    )
 
-                                            Text(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(top = 5.dp, bottom = 5.dp),
-                                                text = "Number of Episodes: ${season.episode_count}",
-                                                textAlign = TextAlign.Center
-                                            )
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 5.dp, bottom = 5.dp),
+                                        text = "Season ${state.lastEpisodeToAir.season_number} Episode ${state.lastEpisodeToAir.episode_number}",
+                                        textAlign = TextAlign.Center
+                                    )
 
-                                            Text(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(top = 5.dp, bottom = 5.dp),
-                                                text = "Aired Date ${season.air_date}",
-                                                textAlign = TextAlign.Center
-                                            )
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 5.dp, bottom = 5.dp),
+                                        text = "${state.lastEpisodeToAir.episode_type.replaceFirstChar { it.uppercaseChar() }} Episode",
+                                        textAlign = TextAlign.Center
+                                    )
 
-                                            Text(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .padding(top = 5.dp, bottom = 5.dp),
-                                                text = "Average Rating: ${season.vote_average}",
-                                                textAlign = TextAlign.Center
-                                            )
-                                        }
-                                    }
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 5.dp, bottom = 5.dp),
+                                        text = "Average Rating: ${state.lastEpisodeToAir.vote_average}",
+                                        textAlign = TextAlign.Center
+                                    )
 
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 5.dp, bottom = 5.dp),
+                                        text = "Runtime: ${state.lastEpisodeToAir.runtime} Minutes",
+                                        textAlign = TextAlign.Center
+                                    )
                                 }
                             }
 
                         }
+
+                        Text(
+                            text = state.lastEpisodeToAir.overview,
+                            color = MaterialTheme.colorScheme.outline
+                        )
                     }
+
+                }
+                Divider(
+                    modifier = Modifier
+                        .height(2.dp)
+                        .fillMaxWidth()
+                )
+            }
+        }
+
+        item {
+            if (state.nextEpisodeToAir != null) {
+                Divider(
+                    modifier = Modifier
+                        .height(2.dp)
+                        .fillMaxWidth()
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 10.dp),
+                    text = "Next Episode to Air",
+                    textAlign = TextAlign.Left,
+                    color = MaterialTheme.colorScheme.tertiary
+                )
+                Card(
+                    modifier = Modifier
+                        .padding(10.dp, 8.dp, 10.dp, 8.dp)
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(10.dp)
+                ) {
+
+                    Column(
+                        modifier = Modifier
+                            .padding(12.dp),
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.Center
+                        ) {
+
+                            Row {
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .fillMaxSize(0.4f)
+                                        .align(Alignment.CenterVertically)
+                                        .padding(4.dp),
+                                    model = "https://image.tmdb.org/t/p/w500/${state.nextEpisodeToAir.still_path}",
+                                    contentDescription = "Next Episode to Air Poster"
+                                )
+                                Column(
+                                    modifier = Modifier
+                                        .padding(10.dp),
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 5.dp, bottom = 5.dp),
+                                        text = state.nextEpisodeToAir.name,
+                                        textAlign = TextAlign.Center,
+                                        color = MaterialTheme.colorScheme.tertiary
+                                    )
+
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 5.dp, bottom = 5.dp),
+                                        text = "Air Date: ${state.nextEpisodeToAir.air_date}",
+                                        textAlign = TextAlign.Center
+                                    )
+
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 5.dp, bottom = 5.dp),
+                                        text = "Season ${state.nextEpisodeToAir.season_number} Episode ${state.nextEpisodeToAir.episode_number}",
+                                        textAlign = TextAlign.Center
+                                    )
+
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 5.dp, bottom = 5.dp),
+                                        text = "${state.nextEpisodeToAir.episode_type} Episode",
+                                        textAlign = TextAlign.Center
+                                    )
+
+                                    if (state.nextEpisodeToAir.vote_average != 0) {
+                                        Text(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(top = 5.dp, bottom = 5.dp),
+                                            text = "Average Rating: ${state.nextEpisodeToAir.vote_average}",
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+
+                                    if (state.nextEpisodeToAir.runtime != 0) {
+                                        Text(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(top = 5.dp, bottom = 5.dp),
+                                            text = "Runtime: ${state.nextEpisodeToAir.runtime}",
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                }
+                            }
+
+                        }
+
+                        Text(
+                            text = state.nextEpisodeToAir.overview,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
+
+                }
+                Divider(
+                    modifier = Modifier
+                        .height(2.dp)
+                        .fillMaxWidth()
+                )
+            }
+        }
+
+        item {
+            if (state.homepage?.isNotBlank() == true) {
+
+                val annotatedText = buildAnnotatedString {
+                    pushStringAnnotation(
+                        tag = "Homepage",
+                        annotation = state.homepage
+                    )
+
+                    withStyle(
+                        style = SpanStyle(
+                            color = MaterialTheme.colorScheme.onSurface,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 15.sp,
+                        ),
+                    ) {
+                        append("Homepage: ")
+                    }
+
+                    withStyle(
+                        style = SpanStyle(
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 15.sp,
+                        ),
+                    ) {
+                        append(state.homepage)
+                    }
+
+                    pop()
+                }
+                ClickableText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 10.dp),
+                    text = annotatedText,
+                    style = TextStyle.Default.copy(
+                        textAlign = TextAlign.Left
+                    ),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    onClick = { offset ->
+                        annotatedText.getStringAnnotations(
+                            tag = "Homepage",
+                            start = offset,
+                            end = offset
+                        )
+                            .firstOrNull()?.let {
+                                val homepageIntent = Intent(Intent.ACTION_VIEW)
+                                homepageIntent.setData(Uri.parse(state.homepage))
+                                context.startActivity(homepageIntent)
+                            }
+                    }
+                )
+            }
+        }
+
+        item {
+            if (state.genres.isNotEmpty()) {
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    item {
+                        Text(
+                            text = "Genre(s)"
+                        )
+                    }
+
+                    state.genres.forEach { genres ->
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .padding(2.dp)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.surfaceColorAtElevation(12.dp),
+                                        shape = RoundedCornerShape(12.dp)
+                                    )
+                                    .clip(RoundedCornerShape(12.dp))
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(7.dp, 3.dp, 7.dp, 3.dp),
+                                    text = genres.name,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+                    }
+
                 }
             }
+        }
 
-            Divider(
-                modifier = Modifier
-                    .height(2.dp)
-                    .fillMaxWidth()
-            )
+        item {
+            if (state.languages.isNotEmpty()) {
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    item {
+                        Text(
+                            text = "Language(s)"
+                        )
+                    }
+
+                    state.languages.forEach { language ->
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .padding(2.dp)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.surfaceColorAtElevation(12.dp),
+                                        shape = RoundedCornerShape(12.dp)
+                                    )
+                                    .clip(RoundedCornerShape(12.dp))
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(7.dp, 3.dp, 7.dp, 3.dp),
+                                    text = language.replaceFirstChar { it.uppercaseChar() },
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+        item {
+            if (state.seasons.isNotEmpty()) {
+                Divider(
+                    modifier = Modifier
+                        .height(2.dp)
+                        .fillMaxWidth()
+                )
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 10.dp),
+                    text = "All Seasons",
+                    textAlign = TextAlign.Left,
+                    color = MaterialTheme.colorScheme.tertiary
+                )
+
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 10.dp),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    state.seasons.forEach { season ->
+                        item {
+                            Card(
+                                modifier = Modifier
+                                    .padding(10.dp, 8.dp, 10.dp, 8.dp)
+                                    .fillMaxWidth(),
+                                shape = RoundedCornerShape(10.dp)
+                            ) {
+
+                                Column(
+                                    modifier = Modifier
+                                        .padding(12.dp),
+                                ) {
+                                    Column(
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        Row {
+                                            AsyncImage(
+                                                modifier = Modifier
+                                                    .fillMaxSize(0.4f)
+                                                    .padding(8.dp),
+                                                model = "https://image.tmdb.org/t/p/w500/${season.poster_path}",
+                                                contentDescription = "Season ${season.season_number} Poster"
+                                            )
+                                            Column(
+                                                modifier = Modifier
+                                                    .padding(10.dp)
+                                                    .align(Alignment.CenterVertically),
+                                                verticalArrangement = Arrangement.Center
+                                            ) {
+
+                                                Text(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(top = 5.dp, bottom = 5.dp),
+                                                    text = season.name,
+                                                    textAlign = TextAlign.Center
+                                                )
+
+                                                Text(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(top = 5.dp, bottom = 5.dp),
+                                                    text = "Season Number: ${season.season_number}",
+                                                    textAlign = TextAlign.Center
+                                                )
+
+                                                Text(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(top = 5.dp, bottom = 5.dp),
+                                                    text = "Number of Episodes: ${season.episode_count}",
+                                                    textAlign = TextAlign.Center
+                                                )
+
+                                                Text(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(top = 5.dp, bottom = 5.dp),
+                                                    text = "Aired Date ${season.air_date}",
+                                                    textAlign = TextAlign.Center
+                                                )
+
+                                                Text(
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(top = 5.dp, bottom = 5.dp),
+                                                    text = "Average Rating: ${season.vote_average}",
+                                                    textAlign = TextAlign.Center
+                                                )
+                                            }
+                                        }
+
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+                Divider(
+                    modifier = Modifier
+                        .height(2.dp)
+                        .fillMaxWidth()
+                )
+            }
         }
     }
+
+
+    MyPullRefreshIndicator(
+        isLoading = state.isLoading,
+        pullRefreshState = pullRefreshState
+    )
+
 }
 
 @Preview(showBackground = true, showSystemUi = true)

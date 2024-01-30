@@ -12,6 +12,8 @@ open class BaseRepositoryImpl @Inject constructor(
     private val dataStore: UserPreferences,
 ) : BaseRepository {
 
+    override val useDynamicTheme = true
+
     override fun getAuthReference() = firebaseAuth
 
     override fun getFirestoreReference() = getFirestoreReference
