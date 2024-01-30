@@ -1,6 +1,7 @@
 package com.company.watchlist.ui
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
@@ -9,36 +10,36 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.twotone.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.company.watchlist.data.BottomNavBarData
 import com.company.watchlist.navigation.Screen
 import com.company.watchlist.navigation.WatchlistNavigationHost
-import com.company.watchlist.presentation.appbar.AppBarEvent
 import com.company.watchlist.presentation.details.movie.MovieDetailsEvent
 import com.company.watchlist.presentation.details.series.SeriesDetailsEvent
+import com.company.watchlist.presentation.favourites.FavouritesEvent
 import com.company.watchlist.ui.components.AppBar
 import com.company.watchlist.ui.components.BottomNavigationBar
 import com.company.watchlist.ui.theme.WatchlistTheme
 import com.company.watchlist.viewmodels.WatchlistViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import java.util.Calendar
-import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class WatchlistActivity : ComponentActivity() {
@@ -47,6 +48,7 @@ class WatchlistActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
+            val context = LocalContext.current
             val viewModel: WatchlistViewModel = hiltViewModel()
             val navController = rememberNavController()
             val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -59,6 +61,13 @@ class WatchlistActivity : ComponentActivity() {
             val favouritesState by viewModel.favouritesState.collectAsStateWithLifecycle()
 
 
+            LaunchedEffect(key1 = viewModel.favouritesChannelEvents) {
+                viewModel.favouritesChannelEvents.collectLatest { event ->
+                    if (event == FavouritesEvent.AddedToFavourites) {
+                        Toast.makeText(context, "Added to favourites", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
 
 //            LaunchedEffect(key1 = true) {
 //                delay(5.seconds)
@@ -97,30 +106,40 @@ class WatchlistActivity : ComponentActivity() {
                         },
                         floatingActionButton = {
                             when (appBarState.screen) {
-                                Screen.MovieDetailsScreen -> {
-                                    FloatingActionButton(onClick = {
-                                        viewModel.onEvent(
-                                            MovieDetailsEvent.AddToFavourites
-                                        )
-                                    }) {
-                                        Icon(
-                                            imageVector = Icons.Filled.Favorite,
-                                            contentDescription = "Add to favourite"
-                                        )
-                                    }
+                                is Screen.MovieDetailsScreen -> {
+                                    ExtendedFloatingActionButton(
+                                        text = { Text(text = "Add to favourite") },
+                                        onClick = {
+                                            viewModel.onEvent(
+                                                MovieDetailsEvent.AddToFavourites
+                                            )
+                                        },
+                                        icon = {
+                                            Icon(
+                                                imageVector = Icons.TwoTone.FavoriteBorder,
+                                                contentDescription = "Favourite Icon"
+                                            )
+                                        }
+                                    )
                                 }
-                                Screen.SeriesDetailsScreen -> {
-                                    FloatingActionButton(onClick = {
-                                        viewModel.onEvent(
-                                            SeriesDetailsEvent.AddToFavourites
-                                        )
-                                    }) {
-                                        Icon(
-                                            imageVector = Icons.Filled.Favorite,
-                                            contentDescription = "Add to favourite"
-                                        )
-                                    }
+
+                                is Screen.SeriesDetailsScreen -> {
+                                    ExtendedFloatingActionButton(
+                                        text = { Text(text = "Add to favourite") },
+                                        onClick = {
+                                            viewModel.onEvent(
+                                                SeriesDetailsEvent.AddToFavourites
+                                            )
+                                        },
+                                        icon = {
+                                            Icon(
+                                                imageVector = Icons.TwoTone.FavoriteBorder,
+                                                contentDescription = "Favourite Icon"
+                                            )
+                                        }
+                                    )
                                 }
+
                                 else -> {}
                             }
                         },
@@ -144,7 +163,8 @@ class WatchlistActivity : ComponentActivity() {
                                 )
                                 AnimatedVisibility(
                                     visible = trendingState.isLoading || movieDetailsState.isLoading ||
-                                            seriesDetailsState.isLoading || favouritesState.isLoading
+                                            seriesDetailsState.isLoading || favouritesState.isLoading ||
+                                            searchMovieState.isLoading || searchSeriesState.isLoading
                                 ) {
                                     LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                                 }

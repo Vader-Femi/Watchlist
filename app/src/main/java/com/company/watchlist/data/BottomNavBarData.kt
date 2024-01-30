@@ -2,6 +2,11 @@ package com.company.watchlist.data
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.twotone.Favorite
+import androidx.compose.material.icons.twotone.FavoriteBorder
+import androidx.compose.material.icons.twotone.Search
+import androidx.compose.material.icons.twotone.Star
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.company.watchlist.navigation.Screen
 
@@ -11,17 +16,17 @@ object BottomNavBarData {
             BottomBarItem(
                 name = "Trending",
                 route = Screen.TrendingScreen.route,
-                icon = Icons.Default.Star
+                icon = Icons.TwoTone.Star
             ),
             BottomBarItem(
                 name = "Search",
                 route = Screen.SearchScreen.route,
-                icon = Icons.Default.Search
+                icon = Icons.TwoTone.Search
             ),
             BottomBarItem(
                 name = "Favourite",
                 route = Screen.FavouritesScreen.route,
-                icon = Icons.Default.Favorite
+                icon = Icons.TwoTone.FavoriteBorder
             ))
     }
 

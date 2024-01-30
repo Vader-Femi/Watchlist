@@ -27,11 +27,12 @@ import com.company.watchlist.presentation.search.series.SearchSeriesState
 import com.company.watchlist.presentation.trending.TrendingEvent
 import com.company.watchlist.presentation.trending.TrendingState
 import com.company.watchlist.use_case.ValidateSearch
-import com.google.firebase.firestore.FieldValue
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -54,6 +55,9 @@ class WatchlistViewModel @Inject constructor(
         private set
     var favouritesState = MutableStateFlow(FavouritesState())
         private set
+
+    private val favouritesChannel = Channel<FavouritesEvent>()
+    val favouritesChannelEvents = favouritesChannel.receiveAsFlow()
 
     init {
         getTrending()
@@ -198,6 +202,8 @@ class WatchlistViewModel @Inject constructor(
                     it.copy(error = null)
                 }
             }
+
+            is FavouritesEvent.AddedToFavourites -> {}
         }
 
     }
@@ -267,7 +273,7 @@ class WatchlistViewModel @Inject constructor(
 //                .collectAsLazyPagingItems()
 
         searchMovieState.update {
-            it.copy(isLoading = false, searchResult = searchResult)
+            it.copy(searchResult = searchResult)
         }
     }
 
@@ -294,7 +300,7 @@ class WatchlistViewModel @Inject constructor(
 //                .collectAsLazyPagingItems()
 
         searchSeriesState.update {
-            it.copy(isLoading = false, searchResult = searchResult)
+            it.copy(searchResult = searchResult)
         }
     }
 
@@ -630,7 +636,7 @@ class WatchlistViewModel @Inject constructor(
                     }
                 }
                 collectionMap[movieName] = movieId
-                addMoviesFavOuterDoc(collectionMap)
+                addMoviesFavOuterDoc(collectionMap, movieName)
             }.addOnFailureListener { exception ->
                 movieDetailState.update {
                     it.copy(
@@ -641,7 +647,7 @@ class WatchlistViewModel @Inject constructor(
             }
     }
 
-    private fun addMoviesFavOuterDoc(collectionMap: MutableMap<String, Any>) {
+    private fun addMoviesFavOuterDoc(collectionMap: MutableMap<String, Any>, movieName: String) {
         repository.getFirestoreReference()
             .collection(repository.getAuthReference().uid.toString())
             .document(FAVOURITESMOVIES.toString())
@@ -651,10 +657,13 @@ class WatchlistViewModel @Inject constructor(
                 movieDetailState.update {
                     it.copy(isLoading = false, error = null)
                 }
+                viewModelScope.launch {
+                    favouritesChannel.send(FavouritesEvent.AddedToFavourites)
+                }
             }.addOnFailureListener { exception ->
                 movieDetailState.update {
                     it.copy(
-                        error = "Unable to add movie to favourites - ${exception.message}",
+                        error = "Unable to add $movieName to favourites - ${exception.message}",
                         isLoading = false
                     )
                 }
@@ -716,7 +725,7 @@ class WatchlistViewModel @Inject constructor(
                     }
                 }
                 collectionMap[seriesName] = seriesId
-                addSeriesFavOuterDoc(collectionMap)
+                addSeriesFavOuterDoc(collectionMap, seriesName)
             }.addOnFailureListener { exception ->
                 seriesDetailState.update {
                     it.copy(
@@ -728,7 +737,7 @@ class WatchlistViewModel @Inject constructor(
 
     }
 
-    private fun addSeriesFavOuterDoc(collectionMap: MutableMap<String, Any>) {
+    private fun addSeriesFavOuterDoc(collectionMap: MutableMap<String, Any>, seriesName: String) {
         repository.getFirestoreReference()
             .collection(repository.getAuthReference().uid.toString())
             .document(FAVOURITESSERIES.toString())
@@ -738,10 +747,13 @@ class WatchlistViewModel @Inject constructor(
                 seriesDetailState.update {
                     it.copy(isLoading = false, error = null)
                 }
+                viewModelScope.launch {
+                    favouritesChannel.send(FavouritesEvent.AddedToFavourites)
+                }
             }.addOnFailureListener { exception ->
                 seriesDetailState.update {
                     it.copy(
-                        error = "Unable to add series to favourites - ${exception.message}",
+                        error = "Unable to add $seriesName to favourites - ${exception.message}",
                         isLoading = false
                     )
                 }
@@ -759,38 +771,24 @@ class WatchlistViewModel @Inject constructor(
         when (film.listType) {
             FAVOURITESMOVIES -> {
 
+                val collectionMap = mutableMapOf<String, Any>()
+
                 repository.getFirestoreReference()
                     .collection(repository.getAuthReference().uid.toString())
                     .document(FAVOURITESMOVIES.toString())
-                    .collection(film.name)
-                    .document(film.id.toString())
-                    .delete()
-                    .addOnSuccessListener {
-
-
-                        repository.getFirestoreReference()
-                            .collection(repository.getAuthReference().uid.toString())
-                            .document(FAVOURITESMOVIES.toString())
-                            .update(mapOf(film.name to FieldValue.delete()))
-                            .addOnSuccessListener {
-                                getFavourites()
-                                favouritesState.update {
-                                    it.copy(isLoading = false, error = null)
-                                }
-                            }.addOnFailureListener { exception ->
-                                favouritesState.update {
-                                    it.copy(
-                                        error = "Unable to remove ${film.name} from favourites - ${exception.message}",
-                                        isLoading = false
-                                    )
-                                }
+                    .get()
+                    .addOnSuccessListener { document ->
+                        if (document.data != null) {
+                            for (data in document.data!!) {
+                                collectionMap[data.key] = data.value
                             }
-
-
+                        }
+                        collectionMap.remove(film.name)
+                        addEditedNewFavMovies(collectionMap, film)
                     }.addOnFailureListener { exception ->
                         movieDetailState.update {
                             it.copy(
-                                error = "Unable to add ${film.name} to favourites - ${exception.message}",
+                                error = "Unable to remove ${film.name} to favourites - ${exception.message}",
                                 isLoading = false
                             )
                         }
@@ -799,46 +797,110 @@ class WatchlistViewModel @Inject constructor(
 
             FAVOURITESSERIES -> {
 
+                val collectionMap = mutableMapOf<String, Any>()
+
                 repository.getFirestoreReference()
                     .collection(repository.getAuthReference().uid.toString())
                     .document(FAVOURITESSERIES.toString())
-                    .collection(film.name)
-                    .document(film.id.toString())
-                    .delete()
-                    .addOnSuccessListener {
-
-
-                        repository.getFirestoreReference()
-                            .collection(repository.getAuthReference().uid.toString())
-                            .document(FAVOURITESSERIES.toString())
-                            .update(mapOf(film.name to FieldValue.delete()))
-                            .addOnSuccessListener {
-                                favouritesState.update {
-                                    it.copy(isLoading = false, error = null)
-                                }
-                            }.addOnFailureListener { exception ->
-                                favouritesState.update {
-                                    it.copy(
-                                        error = "Unable to remove ${film.name} from favourites - ${exception.message}",
-                                        isLoading = false
-                                    )
-                                }
+                    .get()
+                    .addOnSuccessListener { document ->
+                        if (document.data != null) {
+                            for (data in document.data!!) {
+                                collectionMap[data.key] = data.value
                             }
-
-
+                        }
+                        collectionMap.remove(film.name)
+                        addEditedNewFavSeries(collectionMap, film)
                     }.addOnFailureListener { exception ->
                         seriesDetailState.update {
                             it.copy(
-                                error = "Unable to add ${film.name} to favourites - ${exception.message}",
+                                error = "Unable to remove ${film.name} to favourites - ${exception.message}",
                                 isLoading = false
                             )
                         }
                     }
 
-
             }
         }
 
+    }
+
+    private fun addEditedNewFavMovies(collectionMap: MutableMap<String, Any>, filmToRemove: Film) {
+        repository.getFirestoreReference()
+            .collection(repository.getAuthReference().uid.toString())
+            .document(FAVOURITESMOVIES.toString())
+            .set(collectionMap)
+            .addOnSuccessListener {
+                removeFromInnerFavMovies(filmToRemove)
+            }.addOnFailureListener { exception ->
+                movieDetailState.update {
+                    it.copy(
+                        error = "Unable to remove movie from favourites - ${exception.message}",
+                        isLoading = false
+                    )
+                }
+            }
+    }
+
+    private fun removeFromInnerFavMovies(film: Film) {
+        repository.getFirestoreReference()
+            .collection(repository.getAuthReference().uid.toString())
+            .document(FAVOURITESMOVIES.toString())
+            .collection(film.name)
+            .document(film.id.toString())
+            .delete()
+            .addOnSuccessListener {
+                getFavourites()
+                favouritesState.update {
+                    it.copy(isLoading = false, error = null)
+                }
+            }.addOnFailureListener { exception ->
+                movieDetailState.update {
+                    it.copy(
+                        error = "Unable to remove movie from favourites - ${exception.message}",
+                        isLoading = false
+                    )
+                }
+            }
+    }
+
+    private fun addEditedNewFavSeries(collectionMap: MutableMap<String, Any>, filmToRemove: Film) {
+        repository.getFirestoreReference()
+            .collection(repository.getAuthReference().uid.toString())
+            .document(FAVOURITESSERIES.toString())
+            .set(collectionMap)
+            .addOnSuccessListener {
+                removeFromInnerFavSeries(filmToRemove)
+            }.addOnFailureListener { exception ->
+                seriesDetailState.update {
+                    it.copy(
+                        error = "Unable to remove series from favourites - ${exception.message}",
+                        isLoading = false
+                    )
+                }
+            }
+    }
+
+    private fun removeFromInnerFavSeries(film: Film) {
+        repository.getFirestoreReference()
+            .collection(repository.getAuthReference().uid.toString())
+            .document(FAVOURITESSERIES.toString())
+            .collection(film.name)
+            .document(film.id.toString())
+            .delete()
+            .addOnSuccessListener {
+                getFavourites()
+                favouritesState.update {
+                    it.copy(isLoading = false, error = null)
+                }
+            }.addOnFailureListener { exception ->
+                seriesDetailState.update {
+                    it.copy(
+                        error = "Unable to remove series from favourites - ${exception.message}",
+                        isLoading = false
+                    )
+                }
+            }
     }
 
 }
