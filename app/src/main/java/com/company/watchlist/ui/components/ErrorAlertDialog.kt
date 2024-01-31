@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -38,8 +39,8 @@ fun ErrorAlertDialog(
     ) {
         AlertDialog(
             properties = DialogProperties(
-                dismissOnBackPress = true,
-                dismissOnClickOutside = true
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false
             ),
             confirmButton = {
             },
@@ -81,14 +82,13 @@ fun ErrorAlertDialog(
                             onClick = it,
                             modifier = Modifier
                                 .align(Alignment.CenterHorizontally)
-                                .padding(0.dp, 0.dp, 0.dp, 5.dp)
                                 .fillMaxWidth(),
                             shape = AbsoluteRoundedCornerShape(12.dp)
                         ) {
                             Text(text = "Retry")
                         }
                     }
-                    Button(
+                    OutlinedButton(
                         onClick = onDismiss,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
