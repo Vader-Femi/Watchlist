@@ -59,7 +59,7 @@ TMDB_API_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 Now you have 2 options here:
 
-#### Option 1 - If you want to be able to get release build variant
+1. Option 1 - If you want to be able to get release build variant
 
 * In Android Studio, create a new keystore file under Build > Genetare Signes Bundle/APK
 * In the project's root directory, Create a file named keystore.properties
@@ -72,7 +72,7 @@ STORE_PASSWORD=xxxxxxxx
 STORE_FILE=C\:\\xxxx\\xxxx\\xxxx\\xxxx.jks
 ```
 
-#### Option 2 - If you're okay with debug variant
+2. Option 2 - If you're okay with debug variant
 
 If you don't want to go through all that stress,
 In the Module's build.gradle file, just comment out the following lines of code
