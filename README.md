@@ -1,2 +1,120 @@
+[//]: # (<img src="watchlist.png" alt="Watchlist Image" width="700" />)
+
+<a href="https://appetize.io/app/rz2scysw7s6sytetrycafienu4?device=pixel7&osVersion=13.0&scale=75" target="_blank" rel="nofollow noopener noreferrer"
+aria-label="Live Demo"> <u>Live Demo 🚀</u> </a>
+
+
 # Watchlist
- TMDS's Api to display movies. I'll add more details later
+
+---
+
+## Project Description
+
+Watchlist is a movie and tv series database for getting the latest information about trending or specific movies. 
+Add a movie or tv series to your favourite to reference it later
+
+---
+
+## Technologies Used
+
+* Jetpack Compose
+* TMDB API
+* Firebase
+* Dagger-Hilt
+* Material 3 Design
+
+---
+
+## Challenges Overcome
+
+Firebase is Excellent. But it has a few limitations. I made a <a href="https://x.com/FemiOkedeyi/status/1753339199724351837?s=09" target="_blank" rel="nofollow noopener noreferrer" aria-label="Thread in X"> <u>Thread in X</u> </a>. Go there to see the images, but don't forget to like and follow ☺️🙏🏽
+
+The thread says
+* Turns out, you cannot store a data object as a document entry so to get around that, I created a new collection for every movie, and the document of that collection are the details of the movie. Then I stored that collection's reference in the document for the favourite movies. But that means getting the favourite movies is O(n) not O(1).
+* So when I want to get all the favourite movies, I first get list with the movie names and id from the favourite movies document, then for each of the names in the hashmap, I get the content of the movie from it's own collection.
+* Also, you cannot just add an entry to a document. You have to first get the document as a Hashmap, update the hashmap, and then push the updated hashmap as the document so that's 2 network calls instead of 1.
+
+---
+
+## Future improvements
+
+Future improvements will probably involve using a custom database that allows more flexibility with the type to data I can pass.
+
+---
+
+## Before You Run
+
+### Setting The Api Key
+
+* Get an API key from TMDB's website 
+* In the project's root directory, Create a file named apikey.properties
+* Then in the apikey.properties file, set the api key as below
+
+```
+TMDB_API_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+```
+
+### Handling The Keystore Properties
+
+Now you have 2 options here:
+
+#### Option 1 - If you want to be able to get release build variant
+
+* In Android Studio, create a new keystore file under Build > Genetare Signes Bundle/APK
+* In the project's root directory, Create a file named keystore.properties
+* Then in the keystore.properties file, set the key alias, key password, store password, and store file path as below
+
+```
+KEY_ALIAS=xxxx
+KEY_PASSWORD=xxxxxxxx
+STORE_PASSWORD=xxxxxxxx
+STORE_FILE=C\:\\xxxx\\xxxx\\xxxx\\xxxx.jks
+```
+
+#### Option 1 - If you're okay with debug variant
+
+If you don't want to go through all that stress,
+In the Module's build.gradle file, just comment out the following lines of code
+
+```
+val keystorePropertiesFile: File = rootProject.file("keystore.properties")
+val keystoreProperties = Properties()
+keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+```
+
+Also
+
+```
+signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties.getProperty("KEY_ALIAS")
+            keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
+            storePassword = keystoreProperties.getProperty("STORE_PASSWORD")
+            storeFile = file(keystoreProperties.getProperty("STORE_FILE"))
+        }
+    }
+```
+
+And Finally
+
+```
+buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+```
+
+Just make sure the build variant in android studio is set to debug and you're done.
+
+## License
+
+[Apache License](LICENSE)
+
+
