@@ -61,58 +61,60 @@ Now you have 2 options here:
 
 1. Option 1 - If you want to be able to get release build variant
 
-* In Android Studio, create a new keystore file under Build > Genetare Signes Bundle/APK
-* In the project's root directory, Create a file named keystore.properties
-* Then in the keystore.properties file, set the key alias, key password, store password, and store file path as below
+   * In Android Studio, create a new keystore file under Build > Genetare Signes Bundle/APK
+   * In the project's root directory, Create a file named keystore.properties
+   * Then in the keystore.properties file, set the key alias, key password, store password, and store file path as below
 
-```
-KEY_ALIAS=xxxx
-KEY_PASSWORD=xxxxxxxx
-STORE_PASSWORD=xxxxxxxx
-STORE_FILE=C\:\\xxxx\\xxxx\\xxxx\\xxxx.jks
-```
+    ```
+    KEY_ALIAS=xxxx
+    KEY_PASSWORD=xxxxxxxx
+    STORE_PASSWORD=xxxxxxxx
+    STORE_FILE=C\:\\xxxx\\xxxx\\xxxx\\xxxx.jks
+    ```
 
 2. Option 2 - If you're okay with debug variant
 
-If you don't want to go through all that stress,
-In the Module's build.gradle file, just comment out the following lines of code
-
-```
-val keystorePropertiesFile: File = rootProject.file("keystore.properties")
-val keystoreProperties = Properties()
-keystoreProperties.load(FileInputStream(keystorePropertiesFile))
-```
-
-Also
-
-```
-signingConfigs {
-        create("release") {
-            keyAlias = keystoreProperties.getProperty("KEY_ALIAS")
-            keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
-            storePassword = keystoreProperties.getProperty("STORE_PASSWORD")
-            storeFile = file(keystoreProperties.getProperty("STORE_FILE"))
+    If you don't want to go through all that stress,
+    In the Module's build.gradle file, just comment out the following lines of code
+    
+    ```
+    val keystorePropertiesFile: File = rootProject.file("keystore.properties")
+    val keystoreProperties = Properties()
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+    ```
+    
+    Also
+    
+    ```
+    signingConfigs {
+            create("release") {
+                keyAlias = keystoreProperties.getProperty("KEY_ALIAS")
+                keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
+                storePassword = keystoreProperties.getProperty("STORE_PASSWORD")
+                storeFile = file(keystoreProperties.getProperty("STORE_FILE"))
+            }
         }
-    }
-```
-
-And Finally
-
-```
-buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-
-            signingConfig = signingConfigs.getByName("release")
+    ```
+    
+    And Finally
+    
+    ```
+    buildTypes {
+            release {
+                isMinifyEnabled = false
+                proguardFiles(
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
+                )
+    
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
-    }
-```
+    ```
 
-Just make sure the build variant in android studio is set to debug and you're done.
+    Just make sure the build variant in android studio is set to debug and you're done.
+
+
 
 ## License
 
