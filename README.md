@@ -1,4 +1,4 @@
-<img src="watchlist.png" alt="Watchlist Image" width="700" />
+<img src="watchlist.png" alt="Watchlist Image" width="6400" />
 
 <a href="https://appetize.io/app/rz2scysw7s6sytetrycafienu4?device=pixel7&osVersion=13.0&scale=75" target="_blank" rel="nofollow noopener noreferrer"
 aria-label="Live Demo"> <u>Live Demo 🚀</u> </a>
@@ -19,6 +19,7 @@ Add a movie or tv series to your favourite to reference it later
 
 * Jetpack Compose
 * TMDB API
+* Retrofit
 * Firebase
 * Dagger-Hilt
 * Material 3 Design
