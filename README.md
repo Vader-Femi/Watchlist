@@ -1,4 +1,4 @@
-[//]: # (<img src="watchlist.png" alt="Watchlist Image" width="700" />)
+<img src="watchlist.png" alt="Watchlist Image" width="700" />
 
 <a href="https://appetize.io/app/rz2scysw7s6sytetrycafienu4?device=pixel7&osVersion=13.0&scale=75" target="_blank" rel="nofollow noopener noreferrer"
 aria-label="Live Demo"> <u>Live Demo 🚀</u> </a>
@@ -71,7 +71,7 @@ STORE_PASSWORD=xxxxxxxx
 STORE_FILE=C\:\\xxxx\\xxxx\\xxxx\\xxxx.jks
 ```
 
-#### Option 1 - If you're okay with debug variant
+#### Option 2 - If you're okay with debug variant
 
 If you don't want to go through all that stress,
 In the Module's build.gradle file, just comment out the following lines of code
