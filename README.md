@@ -39,7 +39,7 @@ The thread says
 
 ## Future improvements
 
-Future improvements will probably involve using a custom database that allows more flexibility with the type to data I can pass.
+Future improvements will probably be made to the "add to favourites" logic. I think I'll just send each movie's details as a JSON object...no need to create a new collection for each movie. so getting favourites will just be a single network call.
 
 ---
 
