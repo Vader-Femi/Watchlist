@@ -47,7 +47,7 @@ Future improvements will probably be made to the "add to favourites" logic. I th
 
 ### Setting The Api Key
 
-* Get an API key from TMDB's website 
+* Get an API key from <a href="https://developer.themoviedb.org/docs/getting-started" target="_blank" rel="nofollow noopener noreferrer" aria-label="TMDB's website"> <u>TMDB's Website.</u> </a>
 * In the project's root directory, Create a file named apikey.properties
 * Then in the apikey.properties file, set the api key as below
 
