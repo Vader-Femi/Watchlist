@@ -17,16 +17,16 @@ Add a movie or tv series to your favourite to reference it later
 
 ## Screens Screenshots
 ### OnBoarding
-<img src="onboarding1.png" alt="First Onboarding Screen" width="10" /> <img src="onboarding2.png" alt="Second Onboarding Screen" width="10" /> <img src="onboarding3.png" alt="Third Onboarding Image" width="10" />
+<img src="onboarding1.png" alt="First Onboarding Screen" width="50" /> <img src="onboarding2.png" alt="Second Onboarding Screen" width="50" /> <img src="onboarding3.png" alt="Third Onboarding Image" width="50" />
 
 ### Log In & Sign Up
-<img src="login.png" alt="Log In Screen" width="10" /> <img src="sign-up.png" alt="Sign Up Screen" width="10" /> <img src="reset-password.png" alt="Reset Password Screen" width="10" />
+<img src="login.png" alt="Log In Screen" width="50" /> <img src="sign-up.png" alt="Sign Up Screen" width="50" /> <img src="reset-password.png" alt="Reset Password Screen" width="50" />
 
 ### Trending, Search, and Favourites
-<img src="trending.png" alt="Trending Screen" width="10" /> <img src="movie-search.png" alt="Movie Search Screen" width="10" /> <img src="series-search.png" alt="Series Search Screen" width="10" /> <img src="favourites.png" alt="Favourites Screen" width="10" />
+<img src="trending.png" alt="Trending Screen" width="50" /> <img src="movie-search.png" alt="Movie Search Screen" width="50" /> <img src="series-search.png" alt="Series Search Screen" width="50" /> <img src="favourites.png" alt="Favourites Screen" width="50" />
 
 ### Movie and Series Details
-<img src="movie-detail.jpg" alt="Movie Details Screen" width="10" /> <img src="series-search.png" alt="Series Details Screen" width="10" />
+<img src="movie-detail.jpg" alt="Movie Details Screen" width="50" /> <img src="series-search.png" alt="Series Details Screen" width="50" />
 
 ---
 
