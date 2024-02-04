@@ -555,7 +555,7 @@ class WatchlistViewModel @Inject constructor(
                             favouriteMovies.associateBy({ it.name}, { FilmConverter.filmToGson(it) })
                         )
                         .addOnSuccessListener {
-                            getFavourites()
+                            getFavouriteMovies()
                             movieDetailState.update {
                                 it.copy(isLoading = false, error = null)
                             }
@@ -640,7 +640,7 @@ class WatchlistViewModel @Inject constructor(
                             favouriteSeries.associateBy({ it.name}, { FilmConverter.filmToGson(it) })
                         )
                         .addOnSuccessListener {
-                            getFavourites()
+                            getFavouriteSeries()
                             seriesDetailState.update {
                                 it.copy(isLoading = false, error = null)
                             }
@@ -707,7 +707,7 @@ class WatchlistViewModel @Inject constructor(
                                     favouriteMovies.associateBy({ it.name}, { FilmConverter.filmToGson(it) })
                                 )
                                 .addOnSuccessListener {
-                                    getFavourites()
+                                    getFavouriteMovies()
                                     favouritesState.update {
                                         it.copy(isLoading = false, error = null)
                                     }
@@ -759,7 +759,7 @@ class WatchlistViewModel @Inject constructor(
                                     favouriteSeries.associateBy({ it.name}, { FilmConverter.filmToGson(it) })
                                 )
                                 .addOnSuccessListener {
-                                    getFavourites()
+                                    getFavouriteSeries()
                                     favouritesState.update {
                                         it.copy(isLoading = false, error = null)
                                     }
