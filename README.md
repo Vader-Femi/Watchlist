@@ -26,7 +26,7 @@ Add a movie or tv series to your favourite to reference it later
 <img src="trending.png" alt="Trending Screen" width="90" /> <img src="movie-search.png" alt="Movie Search Screen" width="90" /> <img src="series-search.png" alt="Series Search Screen" width="90" /> <img src="favourites.png" alt="Favourites Screen" width="90" />
 
 ### Movie and Series Details
-<img src="movie-detail.jpg" alt="Movie Details Screen" width="90" /> <img src="series-detail.jpg" alt="Series Details Screen" width="90" />
+<img src="series-detail.jpg" alt="Series Details Screen" width="90" /> <img src="movie-detail.jpg" alt="Movie Details Screen" width="90" />
 
 ---
 
