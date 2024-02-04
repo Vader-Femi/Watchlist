@@ -1,28 +1,38 @@
 package com.company.watchlist.data
 
-import android.content.Context
-import android.widget.Toast
+import androidx.room.TypeConverter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+
 
 enum class ListType{
     FAVOURITESMOVIES,
     FAVOURITESSERIES
 }
 
-enum class ListFields{
-    ID,
-    NAME,
-    POSTERPATH,
-    AVERAGERATING
-}
+object FilmConverter {
 
-fun Context.handleNetworkExceptions(
-    exception: Exception? = null,
-    message: String? = null
-) {
+    @TypeConverter
+    @JvmStatic
+    fun dataToListOfFilm(fbData: MutableMap<String, Any>): List<Film> {
 
-    Toast.makeText(
-        this,
-        exception?.message ?: message,
-        Toast.LENGTH_SHORT).show()
+        val favouriteMovies = mutableListOf<Film>()
+        for (data in fbData) {
+            val gson = Gson()
+            val type = object : TypeToken<Film>() {}.type
+
+            favouriteMovies.add(gson.fromJson(data.value.toString(),type))
+        }
+
+        return favouriteMovies
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun filmToGson(film: Film): String {
+        val gson = Gson()
+        val type = object : TypeToken<Film>() {}.type
+        return gson.toJson(film, type)
+    }
 
 }

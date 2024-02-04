@@ -43,18 +43,17 @@ Add a movie or tv series to your favourite to reference it later
 
 ## Challenges Overcome
 
-Firebase is Excellent. But it has a few limitations. I made a <a href="https://x.com/FemiOkedeyi/status/1753339199724351837?s=09" target="_blank" rel="nofollow noopener noreferrer" aria-label="Thread in X"> <u>Thread in X</u> </a>. Go there to see the images, but don't forget to like and follow ☺️🙏🏽
+Firebase is Excellent. But it has a few limitations.
+1. You cannot store a document value as a data object. So to get around that I stored the document values to Json.
+2. You cannot just add an entry to a document. You first have to get the document as a Hashmap, update the hashmap, and then push the updated hashmap as the document (that's 2 network calls instead of 1). So I had to do those when adding to favourites, and when removing from favourites 
 
-The thread says
-* Turns out, you cannot store a data object as a document entry so to get around that, I created a new collection for every movie, and the document of that collection are the details of the movie. Then I stored that collection's reference in the document for the favourite movies. But that means getting the favourite movies is O(n) not O(1).
-* So when I want to get all the favourite movies, I first get list with the movie names and id from the favourite movies document, then for each of the names in the hashmap, I get the content of the movie from it's own collection.
-* Also, you cannot just add an entry to a document. You have to first get the document as a Hashmap, update the hashmap, and then push the updated hashmap as the document so that's 2 network calls instead of 1.
+My first idea was to over-engineer the whole thing 😅 I made a <a href="https://x.com/FemiOkedeyi/status/1753339199724351837?s=09" target="_blank" rel="nofollow noopener noreferrer" aria-label="Thread in X"> <u>Thread in X</u> </a> about it. You can check it out but don't forget to like and follow ☺️
 
 ---
 
 ## Future improvements
 
-Future improvements will probably be made to the "add to favourites" logic. I think I'll just send each movie's details as a JSON object...no need to create a new collection for each movie. so getting favourites will just be a single network call.
+Future improvements will probably just be to use a custom database so that getting and updating favourites will just be a single network call.
 
 ---
 
