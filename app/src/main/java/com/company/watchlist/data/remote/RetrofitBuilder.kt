@@ -7,10 +7,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitBuilder{
-    val BASE_URL = "https://api.themoviedb.org/"
+    const val BASE_URL = "https://api.themoviedb.org/"
 
     val api: TMDBApi by lazy {
-        val create = Retrofit.Builder()
+        Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(OkHttpClient.Builder()
                 .addInterceptor { chain ->
@@ -29,6 +29,5 @@ object RetrofitBuilder{
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(TMDBApi::class.java)
-        create
     }
 }
