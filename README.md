@@ -129,6 +129,7 @@ Now you have 2 options here:
     Just make sure the build variant in android studio is set to debug and you're done.
 
 
+---
 
 ## License
 
