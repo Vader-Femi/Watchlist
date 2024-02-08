@@ -4,6 +4,8 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
+const val DEFAULT_PAGE_INDEX = 1
+const val PAGE_SIZE = 20
 
 enum class ListType{
     FAVOURITESMOVIES,

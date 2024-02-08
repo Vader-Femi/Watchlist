@@ -2,7 +2,7 @@ package com.company.watchlist.data.remote.pagination.search.movie
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.company.watchlist.data.remote.DEFAULT_PAGE_INDEX
+import com.company.watchlist.data.DEFAULT_PAGE_INDEX
 import com.company.watchlist.data.remote.TMDBApi
 import com.company.watchlist.data.remote.response.search.movie.SearchMovieResult
 import retrofit2.HttpException

@@ -125,9 +125,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
     implementation("androidx.navigation:navigation-compose:2.7.6")
 
-    //OnBoarding Pager
-    implementation("com.google.accompanist:accompanist-pager:0.28.0")
-
     //Dagger-Hilt
     implementation("com.google.dagger:hilt-android:2.48")
     ksp("com.google.dagger:hilt-android-compiler:2.48")
