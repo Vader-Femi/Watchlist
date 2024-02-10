@@ -15,7 +15,7 @@ Add a movie or tv series to your favourite to reference it later
 
 ---
 
-## Screens Screenshots
+## Screenshots
 ### OnBoarding
 <img src="onboarding1.png" alt="First Onboarding Screen" width="90" /> <img src="onboarding2.png" alt="Second Onboarding Screen" width="90" /> <img src="onboarding3.png" alt="Third Onboarding Image" width="90" />
 
