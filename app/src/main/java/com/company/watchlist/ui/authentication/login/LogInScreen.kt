@@ -64,6 +64,7 @@ fun LogInScreen(
             .padding(10.dp, 0.dp, 10.dp, 0.dp)
     ) {
 
+
         if (state.loadingError != null) {
             ErrorAlertDialog(state.loadingError, { onEvent(LogInEvent.DismissError) }) {
                 onEvent(LogInEvent.Submit)}

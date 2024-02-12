@@ -3,8 +3,8 @@ package com.company.watchlist.data.repositories.watchlist
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.company.watchlist.data.PAGE_SIZE
 import com.company.watchlist.data.UserPreferences
-import com.company.watchlist.data.remote.PAGE_SIZE
 import com.company.watchlist.data.remote.Resource
 import com.company.watchlist.data.remote.TMDBApi
 import com.company.watchlist.data.remote.pagination.search.movie.SearchMoviePagingSource
@@ -13,7 +13,6 @@ import com.company.watchlist.data.remote.response.search.movie.SearchMovieResult
 import com.company.watchlist.data.remote.response.search.series.SearchSeriesResult
 import com.company.watchlist.data.repositories.base.BaseRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

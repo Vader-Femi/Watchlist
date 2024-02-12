@@ -45,8 +45,7 @@ fun ErrorAlertDialog(
             confirmButton = {
             },
             modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .padding(0.dp, 30.dp, 0.dp, 0.dp)
+                .fillMaxWidth()
                 .align(Alignment.Center),
             text = {
                 Column(

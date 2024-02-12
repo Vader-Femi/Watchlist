@@ -68,6 +68,7 @@ fun SeriesDetailsScreen(
         seriesDetailsEvent(SeriesDetailsEvent.GetDetails)
     }
 
+
     if (state.error != null) {
         ErrorAlertDialog(state.error, {seriesDetailsEvent(SeriesDetailsEvent.DismissError)}) {
             seriesDetailsEvent(SeriesDetailsEvent.GetDetails)
