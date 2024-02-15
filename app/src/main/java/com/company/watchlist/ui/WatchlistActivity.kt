@@ -31,9 +31,9 @@ import androidx.navigation.compose.rememberNavController
 import com.company.watchlist.data.BottomNavBarData
 import com.company.watchlist.navigation.Screen
 import com.company.watchlist.navigation.WatchlistNavigationHost
+import com.company.watchlist.presentation.WatchlistEventChannel
 import com.company.watchlist.presentation.details.movie.MovieDetailsEvent
 import com.company.watchlist.presentation.details.series.SeriesDetailsEvent
-import com.company.watchlist.presentation.favourites.FavouritesEvent
 import com.company.watchlist.ui.components.AppBar
 import com.company.watchlist.ui.components.BottomNavigationBar
 import com.company.watchlist.ui.theme.WatchlistTheme
@@ -59,12 +59,15 @@ class WatchlistActivity : ComponentActivity() {
             val movieDetailsState by viewModel.movieDetailState.collectAsStateWithLifecycle()
             val seriesDetailsState by viewModel.seriesDetailState.collectAsStateWithLifecycle()
             val favouritesState by viewModel.favouritesState.collectAsStateWithLifecycle()
+            val watchlistChannelEvents = viewModel.watchlistChannelEvents
 
 
-            LaunchedEffect(key1 = viewModel.favouritesChannelEvents) {
-                viewModel.favouritesChannelEvents.collectLatest { event ->
-                    if (event == FavouritesEvent.AddedToFavourites) {
-                        Toast.makeText(context, "Added to favourites", Toast.LENGTH_SHORT).show()
+            LaunchedEffect(key1 = watchlistChannelEvents) {
+                watchlistChannelEvents.collectLatest { event ->
+                    when (event) {
+                        is WatchlistEventChannel.AddedToFavourites -> {
+                            Toast.makeText(context, event.addedToFavMessage, Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }

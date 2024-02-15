@@ -17,6 +17,7 @@ import com.company.watchlist.presentation.details.series.SeriesDetailsEvent
 import com.company.watchlist.presentation.details.series.SeriesDetailsState
 import com.company.watchlist.presentation.favourites.FavouritesEvent
 import com.company.watchlist.presentation.favourites.FavouritesState
+import com.company.watchlist.presentation.WatchlistEventChannel
 import com.company.watchlist.presentation.search.movies.SearchMovieEvent
 import com.company.watchlist.presentation.search.movies.SearchMovieState
 import com.company.watchlist.presentation.search.series.SearchSeriesEvent
@@ -53,8 +54,8 @@ class WatchlistViewModel @Inject constructor(
     var favouritesState = MutableStateFlow(FavouritesState())
         private set
 
-    private val favouritesChannel = Channel<FavouritesEvent>()
-    val favouritesChannelEvents = favouritesChannel.receiveAsFlow()
+    private val watchlistChannel = Channel<WatchlistEventChannel>()
+    val watchlistChannelEvents = watchlistChannel.receiveAsFlow()
 
     init {
         getTrending()
@@ -197,8 +198,6 @@ class WatchlistViewModel @Inject constructor(
                     it.copy(error = null)
                 }
             }
-
-            is FavouritesEvent.AddedToFavourites -> {}
         }
 
     }
@@ -560,7 +559,7 @@ class WatchlistViewModel @Inject constructor(
                                 it.copy(isLoading = false, error = null)
                             }
                             viewModelScope.launch {
-                                favouritesChannel.send(FavouritesEvent.AddedToFavourites)
+                                watchlistChannel.send(WatchlistEventChannel.AddedToFavourites("${movieToAdd.name} added to favourites"))
                             }
 
                         }
@@ -578,7 +577,7 @@ class WatchlistViewModel @Inject constructor(
                         it.copy(isLoading = false, error = null)
                     }
                     viewModelScope.launch {
-                        favouritesChannel.send(FavouritesEvent.AddedToFavourites)
+                        watchlistChannel.send(WatchlistEventChannel.AddedToFavourites("${movieToAdd.name} is already in your favourites"))
                     }
                 }
 
@@ -645,7 +644,7 @@ class WatchlistViewModel @Inject constructor(
                                 it.copy(isLoading = false, error = null)
                             }
                             viewModelScope.launch {
-                                favouritesChannel.send(FavouritesEvent.AddedToFavourites)
+                                watchlistChannel.send(WatchlistEventChannel.AddedToFavourites("${seriesToAdd.name} added to favourites"))
                             }
 
                         }
@@ -663,7 +662,7 @@ class WatchlistViewModel @Inject constructor(
                         it.copy(isLoading = false, error = null)
                     }
                     viewModelScope.launch {
-                        favouritesChannel.send(FavouritesEvent.AddedToFavourites)
+                        watchlistChannel.send(WatchlistEventChannel.AddedToFavourites("${seriesToAdd.name} is already in your favourites"))
                     }
                 }
 
