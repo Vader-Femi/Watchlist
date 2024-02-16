@@ -26,6 +26,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,7 +50,6 @@ import com.company.watchlist.data.remote.response.details.movie.ProductionCompan
 import com.company.watchlist.data.remote.response.details.movie.SpokenLanguage
 import com.company.watchlist.presentation.details.movie.MovieDetailsEvent
 import com.company.watchlist.presentation.details.movie.MovieDetailsState
-import com.company.watchlist.presentation.login.LogInEvent
 import com.company.watchlist.ui.components.ErrorAlertDialog
 import com.company.watchlist.ui.components.MyPullRefreshIndicator
 import java.util.Locale
@@ -56,13 +59,13 @@ import java.util.Locale
 fun MovieDetailsScreen(
     movieId: Int,
     state: MovieDetailsState,
-    movieDetailsEvent: (MovieDetailsEvent) -> Unit
+    movieDetailsEvent: (MovieDetailsEvent) -> Unit,
 ) {
 
     val context = LocalContext.current
     val pullRefreshState = rememberPullRefreshState(
         refreshing = state.isLoading,
-        onRefresh = {movieDetailsEvent(MovieDetailsEvent.GetDetails)}
+        onRefresh = { movieDetailsEvent(MovieDetailsEvent.GetDetails) }
     )
 
 
@@ -72,7 +75,7 @@ fun MovieDetailsScreen(
     }
 
     if (state.error != null) {
-        ErrorAlertDialog(state.error, {movieDetailsEvent(MovieDetailsEvent.DismissError)}) {
+        ErrorAlertDialog(state.error, { movieDetailsEvent(MovieDetailsEvent.DismissError) }) {
             movieDetailsEvent(MovieDetailsEvent.GetDetails)
         }
     }
@@ -163,7 +166,8 @@ fun MovieDetailsScreen(
             Divider(
                 modifier = Modifier
                     .height(2.dp)
-                    .fillMaxWidth())
+                    .fillMaxWidth()
+            )
         }
 
         item {
@@ -253,7 +257,7 @@ fun MovieDetailsScreen(
         }
 
         item {
-            if (state.budget != 0) {
+            if (state.budget != 0 && state.budget != null) {
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -265,7 +269,7 @@ fun MovieDetailsScreen(
         }
 
         item {
-            if (state.revenue != 0) {
+            if (state.revenue != 0 && state.revenue != null) {
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -277,12 +281,20 @@ fun MovieDetailsScreen(
         }
 
         item {
-            if (state.revenue != 0 && state.budget != 0) {
+            if (state.revenue != 0 && state.budget != 0 &&
+                state.revenue != null && state.budget != null
+            ) {
+
+                val moneyMadeOrLost = if (state.revenue >= state.budget)
+                    "Money Made ${convertToCurrency(state.revenue - state.budget)}"
+                else
+                    "Money Lost - ${convertToCurrency(state.budget - state.revenue)}"
+
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 10.dp, bottom = 10.dp),
-                    text = "Money Made/Lost: ${convertToCurrency(state.revenue?.minus(state.budget ?: 0))}",
+                    text = moneyMadeOrLost,
                     textAlign = TextAlign.Left
                 )
             }
@@ -434,8 +446,8 @@ fun MovieDetailsScreen(
 
 }
 
-private fun convertToCurrency(number: Int?): String {
-    return NumberFormat.getCurrencyInstance(Locale("en", "US")).format(number ?: 0)
+private fun convertToCurrency(number: Int): String {
+    return NumberFormat.getCurrencyInstance(Locale("en", "US")).format(number)
 }
 
 @Preview(showBackground = true, showSystemUi = true)
