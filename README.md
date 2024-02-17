@@ -55,6 +55,8 @@ My first idea was to over-engineer the whole thing 😅 I made a <a href="https:
 
 Future improvements will probably just be to use a custom database so that getting and updating favourites will just be a single network call.
 
+I should also probably call more APIs to display more details about movies and tv, like credits, video trailer, and add ratings
+
 ---
 
 ## Before You Run
