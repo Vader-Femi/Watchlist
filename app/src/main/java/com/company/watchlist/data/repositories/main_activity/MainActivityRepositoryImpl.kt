@@ -15,6 +15,8 @@ class MainActivityRepositoryImpl @Inject constructor(
 
     override suspend fun isNewUser(): Boolean {
         return getAuthReference().currentUser == null
+                || userFName() == ""
+                || userFName() == ""
     }
 
 }

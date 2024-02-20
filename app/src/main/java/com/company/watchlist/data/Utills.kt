@@ -12,6 +12,12 @@ enum class ListType{
     FAVOURITESSERIES
 }
 
+enum class Utills {
+    USERDETAILS,
+    FIRSTNAME,
+    LASTNAME
+}
+
 object FilmConverter {
 
     @TypeConverter

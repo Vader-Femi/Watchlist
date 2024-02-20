@@ -18,8 +18,14 @@ open class BaseRepositoryImpl @Inject constructor(
 
     override fun getFirestoreReference() = getFirestoreReference
 
+    override suspend fun userFName(): String = dataStore.userFName.first()
+
+    override suspend fun userLName() = dataStore.userLName.first()
+
     override suspend fun logOut() {
         getAuthReference().signOut()
+        dataStore.userLName("")
+        dataStore.userFName("")
     }
 
 }

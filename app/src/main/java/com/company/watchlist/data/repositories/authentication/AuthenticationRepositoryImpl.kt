@@ -9,5 +9,10 @@ import javax.inject.Inject
 class AuthenticationRepositoryImpl @Inject constructor(
     firebaseAuth: FirebaseAuth,
     firestoreReference: FirebaseFirestore,
-    dataStore: UserPreferences
-): AuthenticationRepository, BaseRepositoryImpl(firebaseAuth, firestoreReference, dataStore)
+    private val dataStore: UserPreferences,
+) : AuthenticationRepository, BaseRepositoryImpl(firebaseAuth, firestoreReference, dataStore) {
+
+    override suspend fun userFName(fName: String) = dataStore.userFName(fName)
+
+    override suspend fun userLName(lName: String) = dataStore.userLName(lName)
+}

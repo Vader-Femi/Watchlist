@@ -12,5 +12,9 @@ interface BaseRepository{
 
     fun getFirestoreReference(): FirebaseFirestore
 
+    suspend fun userFName(): String
+
+    suspend fun userLName(): String
+
     suspend fun logOut()
 }

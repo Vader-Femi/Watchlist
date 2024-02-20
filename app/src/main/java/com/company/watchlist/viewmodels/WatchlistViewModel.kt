@@ -683,107 +683,104 @@ class WatchlistViewModel @Inject constructor(
             it.copy(isLoading = true)
         }
 
-        when (film.listType) {
-            FAVOURITESMOVIES -> {
+        if (film.listType == FAVOURITESMOVIES) {
 
-                var favouriteMovies: MutableList<Film>
+            var favouriteMovies: MutableList<Film>
 
-                repository.getFirestoreReference()
-                    .collection(repository.getAuthReference().uid.toString())
-                    .document(FAVOURITESMOVIES.toString())
-                    .get()
-                    .addOnSuccessListener { document ->
-                        if (document.data != null) {
-                            favouriteMovies =
-                                FilmConverter.dataToListOfFilm(document.data!!)
-                                    .toMutableList()
-                            favouriteMovies.remove(film)
+            repository.getFirestoreReference()
+                .collection(repository.getAuthReference().uid.toString())
+                .document(FAVOURITESMOVIES.toString())
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document.data != null) {
+                        favouriteMovies =
+                            FilmConverter.dataToListOfFilm(document.data!!)
+                                .toMutableList()
+                        favouriteMovies.remove(film)
 
-                            repository.getFirestoreReference()
-                                .collection(repository.getAuthReference().uid.toString())
-                                .document(FAVOURITESMOVIES.toString())
-                                .set(
-                                    favouriteMovies.associateBy({ it.name}, { FilmConverter.filmToGson(it) })
-                                )
-                                .addOnSuccessListener {
-                                    getFavouriteMovies()
-                                    favouritesState.update {
-                                        it.copy(isLoading = false, error = null)
-                                    }
-                                }
-                                .addOnFailureListener { exception ->
-                                    movieDetailState.update {
-                                        it.copy(
-                                            error = "Unable to remove ${film.name} from favourites - ${exception.message}",
-                                            isLoading = false
-                                        )
-                                    }
-                                }
-
-                        }
-
-                    }.addOnFailureListener { exception ->
-                        movieDetailState.update {
-                            it.copy(
-                                error = "Unable to remove ${film.name} from favourites - ${exception.message}",
-                                isLoading = false
+                        repository.getFirestoreReference()
+                            .collection(repository.getAuthReference().uid.toString())
+                            .document(FAVOURITESMOVIES.toString())
+                            .set(
+                                favouriteMovies.associateBy({ it.name}, { FilmConverter.filmToGson(it) })
                             )
-                        }
+                            .addOnSuccessListener {
+                                getFavouriteMovies()
+                                favouritesState.update {
+                                    it.copy(isLoading = false, error = null)
+                                }
+                            }
+                            .addOnFailureListener { exception ->
+                                movieDetailState.update {
+                                    it.copy(
+                                        error = "Unable to remove ${film.name} from favourites - ${exception.message}",
+                                        isLoading = false
+                                    )
+                                }
+                            }
+
                     }
 
+                }.addOnFailureListener { exception ->
+                    movieDetailState.update {
+                        it.copy(
+                            error = "Unable to remove ${film.name} from favourites - ${exception.message}",
+                            isLoading = false
+                        )
+                    }
+                }
 
-            }
 
-            FAVOURITESSERIES -> {
+        }
+        else if (film.listType == FAVOURITESSERIES) {
 
-                var favouriteSeries: MutableList<Film>
+            var favouriteSeries: MutableList<Film>
 
 
-                repository.getFirestoreReference()
-                    .collection(repository.getAuthReference().uid.toString())
-                    .document(FAVOURITESSERIES.toString())
-                    .get()
-                    .addOnSuccessListener { document ->
+            repository.getFirestoreReference()
+                .collection(repository.getAuthReference().uid.toString())
+                .document(FAVOURITESSERIES.toString())
+                .get()
+                .addOnSuccessListener { document ->
 
-                        if (document.data != null) {
-                            favouriteSeries =
-                                FilmConverter.dataToListOfFilm(document.data!!)
-                                    .toMutableList()
-                            favouriteSeries.remove(film)
+                    if (document.data != null) {
+                        favouriteSeries =
+                            FilmConverter.dataToListOfFilm(document.data!!)
+                                .toMutableList()
+                        favouriteSeries.remove(film)
 
-                            repository.getFirestoreReference()
-                                .collection(repository.getAuthReference().uid.toString())
-                                .document(FAVOURITESSERIES.toString())
-                                .set(
-                                    favouriteSeries.associateBy({ it.name}, { FilmConverter.filmToGson(it) })
-                                )
-                                .addOnSuccessListener {
-                                    getFavouriteSeries()
-                                    favouritesState.update {
-                                        it.copy(isLoading = false, error = null)
-                                    }
-                                }
-                                .addOnFailureListener { exception ->
-                                    movieDetailState.update {
-                                        it.copy(
-                                            error = "Unable to remove ${film.name} from favourites - ${exception.message}",
-                                            isLoading = false
-                                        )
-                                    }
-                                }
-
-                        }
-
-                    }.addOnFailureListener { exception ->
-                        seriesDetailState.update {
-                            it.copy(
-                                error = "Unable to remove ${film.name} to favourites - ${exception.message}",
-                                isLoading = false
+                        repository.getFirestoreReference()
+                            .collection(repository.getAuthReference().uid.toString())
+                            .document(FAVOURITESSERIES.toString())
+                            .set(
+                                favouriteSeries.associateBy({ it.name}, { FilmConverter.filmToGson(it) })
                             )
-                        }
+                            .addOnSuccessListener {
+                                getFavouriteSeries()
+                                favouritesState.update {
+                                    it.copy(isLoading = false, error = null)
+                                }
+                            }
+                            .addOnFailureListener { exception ->
+                                movieDetailState.update {
+                                    it.copy(
+                                        error = "Unable to remove ${film.name} from favourites - ${exception.message}",
+                                        isLoading = false
+                                    )
+                                }
+                            }
+
                     }
 
-            }
+                }.addOnFailureListener { exception ->
+                    seriesDetailState.update {
+                        it.copy(
+                            error = "Unable to remove ${film.name} to favourites - ${exception.message}",
+                            isLoading = false
+                        )
+                    }
+                }
+
         }
 
     }

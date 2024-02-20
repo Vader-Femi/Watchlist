@@ -1,6 +1,8 @@
 package com.company.watchlist.viewmodels
 
 import androidx.lifecycle.viewModelScope
+import com.company.watchlist.data.ListType
+import com.company.watchlist.data.Utills
 import com.company.watchlist.data.repositories.authentication.AuthenticationRepositoryImpl
 import com.company.watchlist.presentation.login.LogInEvent
 import com.company.watchlist.presentation.login.LogInState
@@ -13,6 +15,7 @@ import com.company.watchlist.use_case.ValidateLogInPassword
 import com.company.watchlist.use_case.ValidateName
 import com.company.watchlist.use_case.ValidateSignUpPassword
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -204,11 +207,10 @@ class AuthenticationViewModel @Inject constructor(
             .addOnCompleteListener { addUserTask ->
                 if (addUserTask.isSuccessful) {
                     viewModelScope.launch {
-                        signUpState.update {
-                            it.copy(isLoading = false, loadingError = null)
-                        }
-                        logIn()
-                        signUpChannel.send(SignUpEvent.SignUpSuccessful)
+                        saveDetailsToFireStore(
+                            firstName = firstName,
+                            lastName = lastName
+                        )
                     }
                 } else {
                     viewModelScope.launch {
@@ -224,6 +226,57 @@ class AuthenticationViewModel @Inject constructor(
             }
     }
 
+    private fun saveDetailsToFireStore(
+        firstName: String,
+        lastName: String,
+    ) {
+
+        repository.getFirestoreReference()
+            .collection(repository.getAuthReference().uid.toString())
+            .document(Utills.USERDETAILS.toString())
+            .set(
+                hashMapOf(
+                    Utills.FIRSTNAME.toString() to firstName,
+                    Utills.LASTNAME.toString() to lastName
+                )
+            )
+            .addOnSuccessListener {
+
+                saveDetailsToPref(
+                    firstName = firstName,
+                    lastName = lastName
+                )
+
+                viewModelScope.launch {
+                    signUpState.update {
+                        it.copy(isLoading = false, loadingError = null)
+                    }
+                    logIn()
+                    signUpChannel.send(SignUpEvent.SignUpSuccessful)
+                }
+            }
+            .addOnFailureListener { exception ->
+                signUpState.update {
+                    it.copy(
+                        isLoading = false,
+                        loadingError = exception.message
+                            ?: "Something went wrong when saving to firestore😪"
+                    )
+                }
+            }
+
+    }
+
+    private fun saveDetailsToPref(
+        firstName: String,
+        lastName: String,
+    ) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.userFName(firstName)
+            repository.userLName(lastName)
+        }
+    }
 
 
     private fun logIn() {
@@ -258,12 +311,7 @@ class AuthenticationViewModel @Inject constructor(
             .signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { addUserTask ->
                 if (addUserTask.isSuccessful) {
-                    viewModelScope.launch {
-                        logInState.update {
-                            it.copy(isLoading = false, loadingError = null)
-                        }
-                        logInChannel.send(LogInEvent.LogInSuccessful)
-                    }
+                    getDetailsFromFireStore()
                 } else {
                     viewModelScope.launch {
                         logInState.update {
@@ -274,6 +322,40 @@ class AuthenticationViewModel @Inject constructor(
                             )
                         }
                     }
+                }
+            }
+
+    }
+
+    private fun getDetailsFromFireStore() {
+
+        repository.getFirestoreReference()
+            .collection(repository.getAuthReference().uid.toString())
+            .document(Utills.USERDETAILS.toString())
+            .get()
+            .addOnSuccessListener { document ->
+
+                saveDetailsToPref(
+                    firstName = document.data?.get(Utills.FIRSTNAME.toString())?.toString() ?: "",
+                    lastName = document.data?.get(Utills.LASTNAME.toString())?.toString() ?: ""
+                )
+
+                viewModelScope.launch {
+
+                    logInState.update {
+                        it.copy(isLoading = false, loadingError = null)
+                    }
+                    logInChannel.send(LogInEvent.LogInSuccessful)
+                }
+
+            }
+            .addOnFailureListener { exception ->
+                logInState.update {
+                    it.copy(
+                        isLoading = false,
+                        loadingError = exception.message
+                            ?: "Something went wrong getting details from fire store😪"
+                    )
                 }
             }
 
