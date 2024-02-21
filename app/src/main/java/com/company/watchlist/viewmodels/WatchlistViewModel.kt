@@ -202,6 +202,10 @@ class WatchlistViewModel @Inject constructor(
 
     }
 
+    suspend fun getUserFName(): String {
+        return repository.userFName()
+    }
+
     private fun getTrending() {
         viewModelScope.launch {
 

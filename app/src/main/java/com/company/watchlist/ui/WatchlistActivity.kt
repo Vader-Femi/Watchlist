@@ -1,5 +1,6 @@
 package com.company.watchlist.ui
 
+import android.icu.util.Calendar
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -39,7 +40,9 @@ import com.company.watchlist.ui.components.BottomNavigationBar
 import com.company.watchlist.ui.theme.WatchlistTheme
 import com.company.watchlist.viewmodels.WatchlistViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
 class WatchlistActivity : ComponentActivity() {
@@ -72,20 +75,23 @@ class WatchlistActivity : ComponentActivity() {
                 }
             }
 
-//            LaunchedEffect(key1 = true) {
-//                delay(5.seconds)
-//                val greeting: String = when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
-//                    in 6..11 -> "Good Morning "
-//                    in 12..16 -> "Good Afternoon "
-//                    in 17..22 -> "Good Evening "
-//                    else -> "You should be sleeping " }
-//
+            LaunchedEffect(key1 = true) {
+                delay(5.seconds)
+                val greeting: String = when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
+                    in 6..11 -> "Good Morning ${viewModel.getUserFName()}"
+                    in 12..16 -> "Good Afternoon ${viewModel.getUserFName()}"
+                    in 17..22 -> "Good Evening ${viewModel.getUserFName()}"
+                    else -> "You should be sleeping ${viewModel.getUserFName()}" }
+
+                Screen.TrendingScreen.name = greeting
+//                Screen.FavouritesScreen.name = greeting
+
 //                val newScreen = appBarState.screen
 //                newScreen.name = greeting
 //                viewModel.onEvent(
 //                    AppBarEvent.AppbarChanged(newScreen)
 //                )
-//            }
+            }
 
             WatchlistTheme(dynamicColor = viewModel.useDynamicTheme) {
                 Surface {

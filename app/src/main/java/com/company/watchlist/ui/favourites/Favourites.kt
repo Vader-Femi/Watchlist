@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Delete
+import androidx.compose.material.icons.twotone.MoreVert
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
@@ -33,7 +33,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -103,7 +106,8 @@ fun FavouritesScreen(
         if (state.favouritesMoviesList.isEmpty()) {
             item {
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
@@ -142,7 +146,8 @@ fun FavouritesScreen(
         if (state.favouritesSeriesList.isEmpty()) {
             item {
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
@@ -179,29 +184,32 @@ fun FavouritesScreen(
 @Composable
 fun DismissBackground(dismissState: DismissState) {
     val color = when (dismissState.dismissDirection) {
-        DismissDirection.StartToEnd -> MaterialTheme.colorScheme.errorContainer
+        DismissDirection.StartToEnd -> MaterialTheme.colorScheme.surfaceColorAtElevation(5.dp)
         DismissDirection.EndToStart -> MaterialTheme.colorScheme.errorContainer
         null -> Color.Transparent
     }
     val direction = dismissState.dismissDirection
 
-    Row(
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color)
             .padding(12.dp, 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        if (direction == DismissDirection.StartToEnd) Icon(
-            Icons.TwoTone.Delete,
-            contentDescription = "Delete"
-        )
-        Spacer(modifier = Modifier)
-        if (direction == DismissDirection.EndToStart) Icon(
-            Icons.TwoTone.Delete,
-            contentDescription = "Delete"
-        )
+        if (direction == DismissDirection.StartToEnd) {
+            Text(
+                text = "View Details",
+                modifier = Modifier.align(Alignment.CenterStart),
+            )
+        }
+        if (direction == DismissDirection.EndToStart) {
+            Icon(
+                Icons.TwoTone.Delete,
+                contentDescription = "Delete",
+                modifier = Modifier.align(Alignment.CenterEnd)
+            )
+        }
     }
 }
 
@@ -215,15 +223,26 @@ fun FilmItem(
 ) {
 
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+
     var show by remember { mutableStateOf(true) }
     val currentItem by rememberUpdatedState(film)
     val dismissState = rememberDismissState(
         confirmValueChange = {
-            if (it == DismissValue.DismissedToStart || it == DismissValue.DismissedToEnd) {
+            if (it == DismissValue.DismissedToStart) {
                 show = false
                 true
-            } else false
-        }, positionalThreshold = { 150.dp.toPx() }
+            } else {
+                if (it == DismissValue.DismissedToEnd) {
+                    if (film.listType == ListType.FAVOURITESMOVIES)
+                        navigateToMovieDetails?.invoke(film.id.toInt())
+                    else
+                        navigateToSeriesDetails?.invoke(film.id.toInt())
+                }
+                false
+            }
+        }, positionalThreshold = { (screenWidth / 2).toPx() }
     )
 
     AnimatedVisibility(
@@ -240,8 +259,8 @@ fun FilmItem(
 
                 Card(
                     modifier = Modifier
-                        .padding(10.dp, 8.dp, 10.dp, 8.dp)
                         .fillMaxWidth()
+                        .padding(vertical = 8.dp)
                         .clickable {
                             if (film.listType == ListType.FAVOURITESMOVIES)
                                 navigateToMovieDetails?.invoke(film.id.toInt())
