@@ -53,9 +53,11 @@ My first idea was to over-engineer the whole thing 😅 I made a <a href="https:
 
 ## Future improvements
 
-Future improvements will probably just be to use a custom database so that getting and updating favourites will just be a single network call.
+First of all, add a navigation animation from the favourite screen details screens. 
 
-I should also probably call more APIs to display more details about movies and tv, like credits, video trailer, and add ratings
+Also I might use a custom database so that getting and updating favourites will just be a single network call.
+
+finally I should also probably call more APIs to display more details about movies and tv, like credits, video trailer, and add ratings
 
 ---
 
