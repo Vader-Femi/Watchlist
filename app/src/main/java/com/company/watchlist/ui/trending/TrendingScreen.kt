@@ -54,7 +54,9 @@ fun TrendingScreen(
             .pullRefresh(pullRefreshState)
     ) {
         state.trendingList.forEach { trendingItem ->
-            item {
+            item (
+                key = trendingItem.id
+            ){
                 Card(
                     modifier = Modifier
                         .padding(10.dp, 8.dp, 10.dp, 8.dp)

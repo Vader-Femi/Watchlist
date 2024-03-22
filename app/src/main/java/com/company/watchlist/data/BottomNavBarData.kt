@@ -7,9 +7,11 @@ import androidx.compose.material.icons.twotone.Favorite
 import androidx.compose.material.icons.twotone.FavoriteBorder
 import androidx.compose.material.icons.twotone.Search
 import androidx.compose.material.icons.twotone.Star
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.company.watchlist.navigation.Screen
 
+@Immutable
 object BottomNavBarData {
     fun getItems(): List<BottomBarItem> {
         return listOf(
@@ -30,6 +32,7 @@ object BottomNavBarData {
             ))
     }
 
+    @Immutable
     data class BottomBarItem(
         val name: String,
         val route: String,

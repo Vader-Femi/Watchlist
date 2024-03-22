@@ -1,5 +1,8 @@
 package com.company.watchlist.data.remote.response.trending
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class TrendingResult(
     val adult: Boolean,
     val backdrop_path: String,
