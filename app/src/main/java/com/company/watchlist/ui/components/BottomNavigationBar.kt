@@ -40,7 +40,7 @@ fun BottomNavigationBar(
                 label = {
                     Text(
                         text = item.name,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = if (selected) FontWeight.Bold else FontWeight.SemiBold,
                     )
                 },
                 icon = {
