@@ -28,7 +28,7 @@ android {
             keyAlias = keystoreProperties.getProperty("KEY_ALIAS")
             keyPassword = keystoreProperties.getProperty("KEY_PASSWORD")
             storePassword = keystoreProperties.getProperty("STORE_PASSWORD")
-            storeFile = file(keystoreProperties.getProperty("STORE_FILE"))
+            storeFile = file(keystoreProperties.getProperty("STORE_FILE")) //Todo keep file safe
         }
     }
 
@@ -39,7 +39,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        buildConfigField("String", "TMDB_API_KEY", apikeyProperties.getProperty("TMDB_API_KEY"))
+        buildConfigField("String", "TMDB_API_KEY", apikeyProperties.getProperty("TMDB_API_KEY"))  //Todo keep safe
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

@@ -18,17 +18,20 @@ object BottomNavBarData {
             BottomBarItem(
                 name = "Trending",
                 route = Screen.TrendingScreen.route,
-                icon = Icons.TwoTone.Star
+                icon = Icons.TwoTone.Star,
+                selectedIconVariant = Icons.Filled.Star
             ),
             BottomBarItem(
                 name = "Search",
                 route = Screen.SearchScreen.route,
-                icon = Icons.TwoTone.Search
+                icon = Icons.TwoTone.Search,
+                selectedIconVariant = Icons.Filled.Search
             ),
             BottomBarItem(
                 name = "Favourite",
                 route = Screen.FavouritesScreen.route,
-                icon = Icons.TwoTone.FavoriteBorder
+                icon = Icons.TwoTone.FavoriteBorder,
+                selectedIconVariant = Icons.Filled.Favorite
             ))
     }
 
@@ -36,6 +39,7 @@ object BottomNavBarData {
     data class BottomBarItem(
         val name: String,
         val route: String,
-        val icon: ImageVector
+        val icon: ImageVector,
+        val selectedIconVariant: ImageVector,
     )
 }

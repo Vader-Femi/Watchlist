@@ -26,7 +26,7 @@ fun BottomNavigationBar(
             .shadow(
                 elevation = 15.dp,
                 spotColor = MaterialTheme.colorScheme.surfaceVariant,
-                shape = RoundedCornerShape(10.dp)
+                shape = RoundedCornerShape(1.dp)
             ),
         tonalElevation = 8.dp
     ) {
@@ -45,12 +45,17 @@ fun BottomNavigationBar(
                 },
                 icon = {
                     Icon(
-                        imageVector = item.icon,
+                        imageVector = if (selected) item.selectedIconVariant else item.icon,
                         contentDescription = "${item.name} Icon"
                     )
                 },
                 alwaysShowLabel = true,
-                colors = NavigationBarItemDefaults.colors()
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                )
             )
 
         }
