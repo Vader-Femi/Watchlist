@@ -33,27 +33,27 @@ jobs:
           distribution: "zulu"
           cache: gradle
 
-#      - name: Generate apikey.properties
-#        run: |
-#          cat <<EOF > apikey.properties
-#          TMDB_API_KEY:"${{secrets.TMDB_API_KEY}}"
-#          EOF
-#
-#      - name: Decode keystore.jks
-#        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/upload-keystore.jks
-#
-#      - name: Generate keystore.properties
-#        run: |
-#          cat <<EOF > keystore.properties
-#          STORE_PASSWORD=${{secrets.STORE_PASSWORD}}
-#          KEY_PASSWORD=${{secrets.KEY_PASSWORD}}
-#          KEY_ALIAS=${{secrets.KEY_ALIAS}}
-#          STORE_FILE=../app/upload-keystore.jks
-#          EOF
-#
-#      - name: Create google-services.json
-#        run: |
-#          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > app/google-services.json
+      - name: Generate apikey.properties
+        run: |
+          cat <<EOF > apikey.properties
+          TMDB_API_KEY:"${{secrets.TMDB_API_KEY}}"
+          EOF
+
+      - name: Decode keystore.jks
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/upload-keystore.jks
+
+      - name: Generate keystore.properties
+        run: |
+          cat <<EOF > keystore.properties
+          STORE_PASSWORD=${{secrets.STORE_PASSWORD}}
+          KEY_PASSWORD=${{secrets.KEY_PASSWORD}}
+          KEY_ALIAS=${{secrets.KEY_ALIAS}}
+          STORE_FILE=../app/upload-keystore.jks
+          EOF
+
+      - name: Create google-services.json
+        run: |
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > app/google-services.json
 
       - name: Run Tests
         run: bash ./gradlew test --stacktrace

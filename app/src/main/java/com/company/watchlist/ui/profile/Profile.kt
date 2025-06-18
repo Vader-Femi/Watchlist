@@ -289,9 +289,9 @@ fun ProfileScreen(
 
         item {
             Text(
-                text = "v$versionName",
+                text = "Version $versionName",
                 modifier = Modifier
-                    .padding(vertical = 8.dp),
+                    .padding(vertical = 50.dp),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onBackground
             )
