@@ -130,7 +130,12 @@ fun ProfileScreen(
     }
 
     LaunchedEffect(key1 = true) {
-        onEvent(ProfileEvent.GetProfile)
+        if (state.profile.firstname.isBlank() ||
+            state.profile.lastname.isBlank() ||
+            state.profile.email.isBlank()
+        ) {
+            onEvent(ProfileEvent.GetProfile)
+        }
     }
 
     LazyColumn(
@@ -282,7 +287,8 @@ fun ProfileScreen(
                     Text(
                         text = "Logout",
                         fontSize = 17.sp,
-                        modifier = Modifier.padding(vertical = 3.dp))
+                        modifier = Modifier.padding(vertical = 3.dp)
+                    )
                 }
             }
         }
