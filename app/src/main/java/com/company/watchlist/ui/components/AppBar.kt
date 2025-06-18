@@ -16,7 +16,9 @@ fun AppBar(
     when (screen) {
         Screen.AuthenticationRoute -> {}
 
-        Screen.FavouritesScreen -> {}
+        Screen.FavouritesScreen -> {
+            LargeAppBar(screen = screen, backArrow = null, scrollBehavior = scrollBehavior)
+        }
 
         Screen.LogInScreen -> {
             LargeAppBar(screen = screen, backArrow = null, scrollBehavior = scrollBehavior)
@@ -33,7 +35,7 @@ fun AppBar(
         }
 
         Screen.SearchScreen -> {
-            TopAppBar(screen = screen, backArrow = null)
+            LargeAppBar(screen = screen, backArrow = null, scrollBehavior = scrollBehavior)
         }
 
         Screen.SeriesDetailsScreen -> {

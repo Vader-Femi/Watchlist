@@ -271,7 +271,7 @@ class WatchlistViewModel @Inject constructor(
         val lastName = profileState.value.profile.lastname
 
         val firstNameResult = validateFirstName.execute(firstName)
-        val lastNameResult = validateLastName.execute(firstName)
+        val lastNameResult = validateLastName.execute(lastName)
 
         val hasError = listOf(
             firstNameResult,
@@ -281,6 +281,7 @@ class WatchlistViewModel @Inject constructor(
         profileState.update {
             it.copy(
                 firstNameError = firstNameResult.errorMessage,
+                lastNameError = lastNameResult.errorMessage
             )
         }
 

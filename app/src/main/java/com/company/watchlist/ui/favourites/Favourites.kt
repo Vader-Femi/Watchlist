@@ -23,6 +23,8 @@ import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -35,6 +37,7 @@ import androidx.compose.material3.DismissState
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SwipeToDismiss
@@ -292,7 +295,13 @@ fun FilmItem(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .padding(vertical = 8.dp)
+                .clickable {
+                    if (film.listType == ListType.FAVOURITESMOVIES)
+                        navigateToMovieDetails?.invoke(film.id.toInt())
+                    else
+                        navigateToSeriesDetails?.invoke(film.id.toInt())
+                },
             shape = RoundedCornerShape(10.dp)
         ) {
             Row(
@@ -355,40 +364,15 @@ fun FilmItem(
                         )
                     }
 
-                    Row(
+                    IconButton(
                         modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(8.dp)
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceAround
+                            .align(Alignment.BottomEnd),
+                        onClick = { showRemoveDialog = true }
                     ) {
-
-                        OutlinedButton (
-                            onClick = { showRemoveDialog = true },
-                            shape = RoundedCornerShape(16.dp),
-                            modifier = Modifier,
-                            colors =  ButtonDefaults.outlinedButtonColors()
-                        ) {
-                            Text(
-                                text = "Remove",
-                            )
-                        }
-
-                        Button(
-                            onClick = {
-                                if (film.listType == ListType.FAVOURITESMOVIES)
-                                    navigateToMovieDetails?.invoke(film.id.toInt())
-                                else
-                                    navigateToSeriesDetails?.invoke(film.id.toInt())
-                            },
-                            shape = RoundedCornerShape(16.dp),
-                            modifier = Modifier,
-                        ) {
-                            Text(
-                                text = "View",
-                            )
-                        }
+                        Icon(imageVector = Icons.TwoTone.Delete,
+                            contentDescription = "Remove Icon",
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(26.dp))
                     }
                 }
             }

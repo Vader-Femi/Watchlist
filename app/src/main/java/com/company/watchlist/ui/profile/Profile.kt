@@ -179,6 +179,13 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                         )
+                        if (state.firstNameError != null) {
+                            Text(
+                                text = state.firstNameError,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.align(Alignment.End)
+                            )
+                        }
                         OutlinedTextField(
                             value = state.profile.lastname,
                             onValueChange = { onEvent(ProfileEvent.LastNameChanged(it)) },
@@ -196,6 +203,13 @@ fun ProfileScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                         )
+                        if (state.lastNameError != null) {
+                            Text(
+                                text = state.lastNameError,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.align(Alignment.End)
+                            )
+                        }
 
                     } else {
                         Text(
@@ -224,8 +238,7 @@ fun ProfileScreen(
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
                             text = if (state.isEditingProfile) "Save" else "Edit",
-                            fontSize = 17.sp,
-                            modifier = Modifier.padding(vertical = 3.dp)
+                            fontSize = 15.sp,
                         )
                     }
                 }
