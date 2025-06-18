@@ -36,7 +36,7 @@ jobs:
       - name: Generate apikey.properties
         run: |
           cat <<EOF > apikey.properties
-          TMDB_API_KEY:"${{ secrets.TMDB_API_KEY }}"
+          TMDB_API_KEY:"${{secrets.TMDB_API_KEY}}"
           EOF
 
 #      - name: Generate keystore.properties
@@ -61,7 +61,7 @@ jobs:
       - name: Generate apikey.properties
         run: |
           cat <<EOF > apikey.properties
-          TMDB_API_KEY:"${{ vars.TMDB_API_KEY }}"
+          TMDB_API_KEY:"${{secrets.TMDB_API_KEY }}"
           EOF
 #
 #      - name: Generate keystore.properties
