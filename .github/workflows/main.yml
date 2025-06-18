@@ -139,7 +139,7 @@ jobs:
       - name: Upload APK Release - ${{ env.repository_name }}
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.date_today }} - ${{ env.app_name }}
+          name: ${{ env.date_today }} - ${{ env.app_name }} - APK Release
           path: ${{ env.main_project_module }}/build/outputs/apk/release/
           retention-days: 30
 
@@ -147,18 +147,18 @@ jobs:
       - name: Upload AAB (App Bundle) Release - ${{ env.repository_name }}
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.date_today }} - ${{ env.app_name }}
+          name: ${{ env.date_today }} - ${{ env.app_name }} - AAB Release
           path: ${{ env.main_project_module }}/build/outputs/bundle/release/
           retention-days: 30
 
-      # Upload Artifact Build
-      # Noted For Output [main_project_module]/build/outputs/apk/debug/
-      - name: Upload APK Debug - ${{ env.repository_name }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.date_today }} - ${{ env.app_name }}
-          path: ${{ env.main_project_module }}/build/outputs/apk/debug/
-          retention-days: 30
+#      # Upload Artifact Build
+#      # Noted For Output [main_project_module]/build/outputs/apk/debug/
+#      - name: Upload APK Debug - ${{ env.repository_name }}
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: ${{ env.date_today }} - ${{ env.app_name }} - APK Debug
+#          path: ${{ env.main_project_module }}/build/outputs/apk/debug/
+#          retention-days: 30
 
   generate-release:
     needs: build
