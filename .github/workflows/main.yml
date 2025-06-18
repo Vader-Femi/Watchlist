@@ -48,7 +48,7 @@ jobs:
           storePassword:${{ secrets.STORE_PASSWORD }}
           keyPassword:${{ secrets.KEY_PASSWORD }}
           keyAlias:${{ secrets.KEY_ALIAS }}
-          storeFile:${{ secrets.STORE_FILE }}
+          storeFile=upload-keystore.jks
           EOF
 
       - name: Run Tests
@@ -76,7 +76,7 @@ jobs:
           storePassword:${{ secrets.STORE_PASSWORD }}
           keyPassword:${{ secrets.KEY_PASSWORD }}
           keyAlias:${{ secrets.KEY_ALIAS }}
-          storeFile:${{ secrets.STORE_FILE }}
+          storeFile=upload-keystore.jks
           EOF
 
       # Set Current Date As Env Variable
