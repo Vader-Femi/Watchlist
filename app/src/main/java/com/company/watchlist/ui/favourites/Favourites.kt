@@ -372,7 +372,7 @@ fun FilmItem(
                         Icon(imageVector = Icons.TwoTone.Delete,
                             contentDescription = "Remove Icon",
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(26.dp))
+                            modifier = Modifier.size(22.dp))
                     }
                 }
             }
