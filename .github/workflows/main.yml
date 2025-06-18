@@ -5,7 +5,7 @@ env:
   main_project_module: app
 
   # The name of the app
-  app_name: Class Konnect
+  app_name: Watchlist
 
 on:
   push:
@@ -19,47 +19,47 @@ on:
 
 jobs:
 
-#  test:
-#    name: Run Unit Tests
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3.5.2
-#
-#      - name: Setup Java JDK
-#        uses: actions/setup-java@v1.4.4
-#        with:
-#          java-version: 17
-#          distribution: "zulu"
-#          cache: gradle
-#
-#      - name: Generate apikey.properties
-#        run: |
-#          cat <<EOF > apikey.properties
-#          TMDB_API_KEY:"${{secrets.TMDB_API_KEY}}"
-#          EOF
-#
-#      - name: Decode keystore.jks
-#        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/upload-keystore.jks
-#
-#      - name: Generate keystore.properties
-#        run: |
-#          cat <<EOF > keystore.properties
-#          STORE_PASSWORD=${{secrets.STORE_PASSWORD}}
-#          KEY_PASSWORD=${{secrets.KEY_PASSWORD}}
-#          KEY_ALIAS=${{secrets.KEY_ALIAS}}
-#          STORE_FILE=../app/upload-keystore.jks
-#          EOF
-#
-#      - name: Create google-services.json
-#        run: |
-#          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > app/google-services.json
-#
-#      - name: Run Tests
-#        run: bash ./gradlew test --stacktrace
+  test:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v1.4.4
+        with:
+          java-version: 17
+          distribution: "zulu"
+          cache: gradle
+
+      - name: Generate apikey.properties
+        run: |
+          cat <<EOF > apikey.properties
+          TMDB_API_KEY:"${{secrets.TMDB_API_KEY}}"
+          EOF
+
+      - name: Decode keystore.jks
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/upload-keystore.jks
+
+      - name: Generate keystore.properties
+        run: |
+          cat <<EOF > keystore.properties
+          STORE_PASSWORD=${{secrets.STORE_PASSWORD}}
+          KEY_PASSWORD=${{secrets.KEY_PASSWORD}}
+          KEY_ALIAS=${{secrets.KEY_ALIAS}}
+          STORE_FILE=../app/upload-keystore.jks
+          EOF
+
+      - name: Create google-services.json
+        run: |
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > app/google-services.json
+
+      - name: Run Tests
+        run: bash ./gradlew test --stacktrace
 
   build:
-#    needs: test
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -118,13 +118,13 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
 
-      # Run Build Project
-      - name: Build with Gradle
-        run: ./gradlew build
+#      # Run Build Project
+#      - name: Build with Gradle
+#        run: ./gradlew build
 
-      # Create APK Debug
-      - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
-        run: ./gradlew assembleDebug
+#      # Create APK Debug
+#      - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
+#        run: ./gradlew assembleDebug
 
       # Create APK Release
       - name: Build apk release project (APK) - ${{ env.main_project_module }} module
@@ -186,13 +186,27 @@ jobs:
           TAG_NAME: ${{ env.TAG_NAME }}
           TAG_MESSAGE: ${{ env.TAG_MESSAGE }}
 
+      - name: Download Release Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.date_today }} - ${{ env.app_name }} - APK Release
+          path: ${{ env.main_project_module }}/build/outputs/apk/release/
+
+      - name: Download AAB Release
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.date_today }} - ${{ env.app_name }} - AAB Release
+          path: ${{ env.main_project_module }}/build/outputs/bundle/release/
+
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ env.main_project_module }}/build/outputs/apk/release/*.apk
+          files: |
+            ${{ env.main_project_module }}/build/outputs/apk/release/*.apk
+            ${{ env.main_project_module }}/build/outputs/bundle/release/*.aab
           tag_name: ${{ env.TAG_NAME }}
-          title: Release ${{ env.app_name }} - ${{ env.TAG_NAME }}
+          body: Release ${{ env.app_name }} - ${{ env.TAG_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

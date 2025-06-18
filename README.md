@@ -6,12 +6,12 @@ aria-label="Live Demo"> <u>Live Demo 🚀</u> </a>
 
 # Watchlist
 
----
+Watchlist is a movie and tv series database for getting the latest information about trending or specific movies. Create your very own watchlist today.
 
+---
 ## Project Description
 
-Watchlist is a movie and tv series database for getting the latest information about trending or specific movies. 
-Add a movie or tv series to your favourite to reference it later
+Watchlist is an Android application that leverages TMDB API, to offer access to an ever-increasing database of over 2 million movies and TV series, and integrates an efficient paginated search and favourites management feature. It also Implements a visually pleasing UI using Jetpack Compose, adhering to Material 3 Design principles.
 
 ---
 

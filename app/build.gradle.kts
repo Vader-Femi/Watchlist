@@ -36,8 +36,8 @@ android {
         applicationId = "com.company.watchlist"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "2.0"
 
         buildConfigField("String", "TMDB_API_KEY", apikeyProperties.getProperty("TMDB_API_KEY"))  //Todo keep safe
 
