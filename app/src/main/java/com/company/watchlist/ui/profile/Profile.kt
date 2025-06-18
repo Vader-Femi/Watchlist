@@ -38,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -57,6 +58,14 @@ fun ProfileScreen(
     state: ProfileState,
     onEvent: (ProfileEvent) -> Unit,
 ) {
+
+    val context = LocalContext.current
+    val versionName = try {
+        context.packageManager
+            .getPackageInfo(context.packageName, 0).versionName
+    } catch (e: Exception) {
+        "v?"
+    }
 
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -276,6 +285,16 @@ fun ProfileScreen(
                         modifier = Modifier.padding(vertical = 3.dp))
                 }
             }
+        }
+
+        item {
+            Text(
+                text = "v$versionName",
+                modifier = Modifier
+                    .padding(vertical = 8.dp),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground
+            )
         }
 
     }
