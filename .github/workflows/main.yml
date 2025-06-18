@@ -39,6 +39,9 @@ jobs:
           TMDB_API_KEY:"${{secrets.TMDB_API_KEY}}"
           EOF
 
+      - name: Decode keystore.jks
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > upload-keystore.jks
+
       - name: Generate keystore.properties
         run: |
           cat <<EOF > keystore.properties
@@ -63,6 +66,9 @@ jobs:
           cat <<EOF > apikey.properties
           TMDB_API_KEY:"${{secrets.TMDB_API_KEY }}"
           EOF
+
+      - name: Decode keystore.jks
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > upload-keystore.jks
 
       - name: Generate keystore.properties
         run: |
