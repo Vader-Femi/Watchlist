@@ -96,7 +96,10 @@ fun FavouritesScreen(
         }
     }
 
-    Column(modifier = Modifier) {
+    Column(
+        modifier = Modifier
+        .padding(15.dp, 0.dp, 15.dp, 0.dp)
+    ) {
         TabRow(
             selectedTabIndex = pagerState.currentPage,
         ) {
@@ -123,8 +126,7 @@ fun FavouritesScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .pullRefresh(pullRefreshState)
-                    .padding(15.dp, 0.dp, 15.dp, 0.dp),
+                    .pullRefresh(pullRefreshState),
                 verticalArrangement = Arrangement.Top
             ) {
 
