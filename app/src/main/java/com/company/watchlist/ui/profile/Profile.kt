@@ -64,7 +64,7 @@ fun ProfileScreen(
         context.packageManager
             .getPackageInfo(context.packageName, 0).versionName
     } catch (e: Exception) {
-        "v?"
+        "Unknown"
     }
 
     var showLogoutDialog by remember { mutableStateOf(false) }

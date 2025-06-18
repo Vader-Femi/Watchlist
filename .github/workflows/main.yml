@@ -169,6 +169,13 @@ jobs:
         with:
           fetch-depth: 0  # Still needed if you're creating and pushing tags
 
+#      Recalculate date_today and app_name for use in artifact names
+      - name: Set environment variables
+        run: |
+          echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+          echo "app_name=Watchlist" >> $GITHUB_ENV
+         
+
       - name: Create Tag
         run: |
           TAG_NAME=$(date +'%Y.%m.%d-%H%M%S')
