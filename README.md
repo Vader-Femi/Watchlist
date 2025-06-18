@@ -87,7 +87,7 @@ Now you have 2 options here:
     KEY_ALIAS=xxxx
     KEY_PASSWORD=xxxxxxxx
     STORE_PASSWORD=xxxxxxxx
-    STORE_FILE=C\:\\xxxx\\xxxx\\xxxx\\xxxx.jks
+    STORE_FILE=../xxxx/xxxx.jks
     ```
 
 2. Option 2 - If you're okay with debug variant
