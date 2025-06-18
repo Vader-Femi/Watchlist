@@ -42,16 +42,13 @@ jobs:
       - name: Decode keystore.jks
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > upload-keystore.jks
 
-      - name: Print keystore file size
-        run: du -h upload-keystore.jks
-
       - name: Generate keystore.properties
         run: |
           cat <<EOF > keystore.properties
-          storePassword:${{ secrets.STORE_PASSWORD }}
-          keyPassword:${{ secrets.KEY_PASSWORD }}
-          keyAlias:${{ secrets.KEY_ALIAS }}
-          storeFile=upload-keystore.jks
+          STORE_PASSWORD:${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD:${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS:${{ secrets.KEY_ALIAS }}
+          STORE_FILE=upload-keystore.jks
           EOF
 
       - name: Run Tests
@@ -76,10 +73,10 @@ jobs:
       - name: Generate keystore.properties
         run: |
           cat <<EOF > keystore.properties
-          storePassword:${{ secrets.STORE_PASSWORD }}
-          keyPassword:${{ secrets.KEY_PASSWORD }}
-          keyAlias:${{ secrets.KEY_ALIAS }}
-          storeFile=upload-keystore.jks
+          STORE_PASSWORD:${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD:${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS:${{ secrets.KEY_ALIAS }}
+          STORE_FILE=upload-keystore.jks
           EOF
 
       # Set Current Date As Env Variable
