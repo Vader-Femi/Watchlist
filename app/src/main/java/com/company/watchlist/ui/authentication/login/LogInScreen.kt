@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -80,7 +81,7 @@ fun LogInScreen(
 
         OutlinedTextField(
             value = state.email,
-            label = { Text(text = "Email") },
+            label = { Text(text = "Email", fontSize = 16.sp) },
             onValueChange = {
                 onEvent(LogInEvent.EmailChanged(it))
             },
@@ -90,6 +91,7 @@ fun LogInScreen(
             leadingIcon = {
                 Icon(Icons.Filled.Email, "Email Icon")
             },
+            shape = RoundedCornerShape(16.dp),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 capitalization = KeyboardCapitalization.None,
@@ -105,10 +107,10 @@ fun LogInScreen(
                 modifier = Modifier.align(Alignment.End)
             )
         }
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         OutlinedTextField(
             value = state.password,
-            label = { Text(text = "Password") },
+            label = { Text(text = "Password", fontSize = 16.sp) },
             onValueChange = {
                 onEvent(LogInEvent.PasswordChanged(it))
             },
@@ -140,6 +142,7 @@ fun LogInScreen(
             leadingIcon = {
                 Icon(Icons.Filled.Lock, "Password Icon")
             },
+            shape = RoundedCornerShape(16.dp),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 capitalization = KeyboardCapitalization.None,
@@ -161,23 +164,29 @@ fun LogInScreen(
         ) {
             Text(text = "Forgot Password?")
         }
+        Spacer(modifier = Modifier.height(15.dp))
+
         if (state.isLoading) {
-            Spacer(modifier = Modifier.height(20.dp))
             CircularProgressIndicator()
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(15.dp))
         }
         Button(
             onClick = {
                 onEvent(LogInEvent.Submit)
             },
+            shape = RoundedCornerShape(16.dp),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .fillMaxWidth(),
             enabled = !state.isLoading
         ) {
-            Text(text = "Sign In")
+            Text(
+                text = "Sign In",
+                fontSize = 17.sp,
+                modifier = Modifier.padding(vertical = 3.dp)
+            )
         }
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(15.dp))
         val annotatedText = buildAnnotatedString {
             pushStringAnnotation(
                 tag = "Create Account Button",

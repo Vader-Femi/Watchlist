@@ -26,7 +26,7 @@ fun BottomNavigationBar(
             .shadow(
                 elevation = 15.dp,
                 spotColor = MaterialTheme.colorScheme.surfaceVariant,
-                shape = RoundedCornerShape(1.dp)
+                shape = RoundedCornerShape(16.dp)
             ),
         tonalElevation = 8.dp
     ) {

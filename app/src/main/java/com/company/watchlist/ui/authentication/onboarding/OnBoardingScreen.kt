@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -32,7 +33,7 @@ fun OnBoardingScreen(
     toLogIn: () -> Unit,
     toSignIn: () -> Unit,
 
-) {
+    ) {
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPageState()
@@ -72,13 +73,18 @@ fun OnBoardingScreen(
             AnimatedVisibility(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(40.dp, 40.dp, 40.dp, 0.dp),
+                    .padding(40.dp, 15.dp, 40.dp, 0.dp),
                 visible = pagerState.currentPage == 2
             ) {
                 Button(
+                    shape = RoundedCornerShape(16.dp),
                     onClick = toLogIn
                 ) {
-                    Text(text = "Log In")
+                    Text(
+                        text = "Log In",
+                        fontSize = 17.sp,
+                        modifier = Modifier.padding(vertical = 3.dp)
+                    )
                 }
 
             }
@@ -90,31 +96,43 @@ fun OnBoardingScreen(
                 visible = pagerState.currentPage == 2,
             ) {
                 OutlinedButton(
+                    shape = RoundedCornerShape(16.dp),
                     onClick = toSignIn
                 ) {
-                    Text(text = "Sign Up")
+                    Text(
+                        text = "Sign Up",
+                        fontSize = 17.sp,
+                        modifier = Modifier.padding(vertical = 3.dp)
+                    )
                 }
             }
 
             AnimatedVisibility(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(40.dp, 60.dp, 40.dp, 0.dp)
+                    .padding(40.dp, 15.dp, 40.dp, 0.dp)
                     .onGloballyPositioned { coordinates ->
                         nextButtonPosition = coordinates.positionInParent().y
                     },
                 visible = pagerState.currentPage != 2
             ) {
                 Button(
+                    shape = RoundedCornerShape(16.dp),
                     onClick = {
                         coroutineScope.launch {
-                            pagerState.animateScrollToPage(
-                                page = pagerState.currentPage + 1
-                            )
+                            if (pagerState.currentPage < pagerState.pageCount - 1) {
+                                pagerState.animateScrollToPage(
+                                    page = pagerState.currentPage + 1
+                                )
+                            }
                         }
                     }
                 ) {
-                    Text(text = "Next")
+                    Text(
+                        text = "Next",
+                        fontSize = 17.sp,
+                        modifier = Modifier.padding(vertical = 3.dp)
+                    )
                 }
             }
         }
@@ -128,8 +146,9 @@ private fun OnBoardingViewPager(
     pagerState: PagerState,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier
-        .padding(0.dp, 10.dp, 0.dp, 10.dp)
+    Box(
+        modifier = modifier
+            .padding(0.dp, 10.dp, 0.dp, 10.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -60,7 +61,7 @@ fun SignUpScreen(
         modifier = Modifier
             .verticalScroll(scrollState)
             .fillMaxSize()
-            .padding(10.dp, 0.dp, 10.dp, 0.dp)
+            .padding(20.dp, 0.dp, 20.dp, 0.dp)
     ) {
         if (state.loadingError != null) {
             ErrorAlertDialog(state.loadingError, {onEvent(SignUpEvent.DismissError)}){
@@ -76,8 +77,36 @@ fun SignUpScreen(
             }
         }
         OutlinedTextField(
+            value = state.email,
+            label = { Text(text = "Email", fontSize = 16.sp) },
+            onValueChange = {
+                onEvent(SignUpEvent.EmailChanged(it))
+            },
+            isError = state.emailError != null,
+            modifier = Modifier.fillMaxWidth(),
+            maxLines = 2,
+            leadingIcon = {
+                Icon(Icons.Filled.Email, "Email Icon")
+            },
+            shape = RoundedCornerShape(16.dp),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                capitalization = KeyboardCapitalization.None,
+                autoCorrect = false,
+                imeAction = ImeAction.Next
+            )
+        )
+        if (state.emailError != null) {
+            Text(
+                text = state.emailError,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.align(Alignment.End)
+            )
+        }
+        Spacer(modifier = Modifier.height(30.dp))
+        OutlinedTextField(
             value = state.firstName,
-            label = { Text(text = "First Name") },
+            label = { Text(text = "First Name", fontSize = 16.sp) },
             onValueChange = {
                 onEvent(
                     SignUpEvent.FirstNameChanged(it)
@@ -89,6 +118,7 @@ fun SignUpScreen(
             leadingIcon = {
                 Icon(Icons.Filled.Person, "First Name Icon")
             },
+            shape = RoundedCornerShape(16.dp),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 capitalization = KeyboardCapitalization.Words,
@@ -103,10 +133,10 @@ fun SignUpScreen(
                 modifier = Modifier.align(Alignment.End)
             )
         }
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(30.dp))
         OutlinedTextField(
             value = state.lastName,
-            label = { Text(text = "Last Name") },
+            label = { Text(text = "Last Name", fontSize = 16.sp) },
             onValueChange = {
                 onEvent(
                     SignUpEvent.LastNameChanged(it)
@@ -118,6 +148,7 @@ fun SignUpScreen(
             leadingIcon = {
                 Icon(Icons.Filled.Person, "Last Name Icon")
             },
+            shape = RoundedCornerShape(16.dp),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 capitalization = KeyboardCapitalization.Words,
@@ -133,37 +164,10 @@ fun SignUpScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
-        OutlinedTextField(
-            value = state.email,
-            label = { Text(text = "Email") },
-            onValueChange = {
-                onEvent(SignUpEvent.EmailChanged(it))
-            },
-            isError = state.emailError != null,
-            modifier = Modifier.fillMaxWidth(),
-            maxLines = 2,
-            leadingIcon = {
-                Icon(Icons.Filled.Email, "Email Icon")
-            },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                capitalization = KeyboardCapitalization.None,
-                autoCorrect = false,
-                imeAction = ImeAction.Next
-            )
-        )
-        if (state.emailError != null) {
-            Text(
-                text = state.emailError,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.align(Alignment.End)
-            )
-        }
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(30.dp))
         OutlinedTextField(
             value = state.password,
-            label = { Text(text = "Password") },
+            label = { Text(text = "Password", fontSize = 16.sp) },
             onValueChange = {
                 onEvent(
                     SignUpEvent.PasswordChanged(it)
@@ -197,6 +201,7 @@ fun SignUpScreen(
             leadingIcon = {
                 Icon(Icons.Filled.Lock, "Password Icon")
             },
+            shape = RoundedCornerShape(16.dp),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 capitalization = KeyboardCapitalization.None,
@@ -211,7 +216,7 @@ fun SignUpScreen(
                 modifier = Modifier.align(Alignment.End)
             )
         }
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(30.dp))
         if (state.isLoading) {
             CircularProgressIndicator()
             Spacer(modifier = Modifier.height(40.dp))
@@ -220,14 +225,19 @@ fun SignUpScreen(
             onClick = {
                 onEvent(SignUpEvent.Submit)
             },
+            shape = RoundedCornerShape(16.dp),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .fillMaxWidth(),
             enabled = !state.isLoading
         ) {
-            Text(text = "Sign Up")
+            Text(
+                text = "Sign Up",
+                fontSize = 17.sp,
+                modifier = Modifier.padding(vertical = 3.dp)
+            )
         }
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         val annotatedText = buildAnnotatedString {
             pushStringAnnotation(
                 tag = "Sign In Button",

@@ -7,18 +7,18 @@ object OnBoardingData {
         return listOf(
             OnBoardingItem(
                 R.drawable.movie_night_rafiki,
-                "Loren Ipson",
-                "Just some random words, iono what to put yet"
+                "Stay in the Loop with Trending Movies",
+                "Discover and catch the latest popular movies and shows"
             ),
             OnBoardingItem(
                 R.drawable.research_paper_pana,
-                "Loren Ipson",
-                "Get vital details about interesting movies and tv series"
+                "Search Anything You Love",
+                "Find detailed info about any movie or show — all in one place"
             ),
             OnBoardingItem(
                 R.drawable.todo_list_rafiki,
-                "Loren Ipson",
-                "All your favourite movies and tv series in one place"
+                "Build Your Watchlist",
+                "Mark your favourites and keep track of what you love"
             )
         )
     }
