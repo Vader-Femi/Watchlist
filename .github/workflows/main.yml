@@ -45,9 +45,9 @@ jobs:
 #      - name: Generate keystore.properties
 #        run: |
 #          cat <<EOF > keystore.properties
-#          STORE_PASSWORD:${{ secrets.STORE_PASSWORD }}
-#          KEY_PASSWORD:${{ secrets.KEY_PASSWORD }}
-#          KEY_ALIAS:${{ secrets.KEY_ALIAS }}
+#          STORE_PASSWORD=${{secrets.STORE_PASSWORD}}
+#          KEY_PASSWORD=${{secrets.KEY_PASSWORD}}
+#          KEY_ALIAS=${{secrets.KEY_ALIAS}}
 #          STORE_FILE=upload-keystore.jks
 #          EOF
 #
@@ -77,9 +77,9 @@ jobs:
       - name: Generate keystore.properties
         run: |
           cat <<EOF > keystore.properties
-          STORE_PASSWORD:${{ secrets.STORE_PASSWORD }}
-          KEY_PASSWORD:${{ secrets.KEY_PASSWORD }}
-          KEY_ALIAS:${{ secrets.KEY_ALIAS }}
+          STORE_PASSWORD=${{secrets.STORE_PASSWORD}}
+          KEY_PASSWORD=${{secrets.KEY_PASSWORD}}
+          KEY_ALIAS=${{secrets.KEY_ALIAS}}
           STORE_FILE=upload-keystore.jks
           EOF
 
@@ -165,11 +165,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Still needed if you're creating and pushing tags
 
       - name: Create Tag
         run: |
-          echo "TAG_NAME=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
+          TAG_NAME=$(date +'%Y.%m.%d')
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
           echo "TAG_MESSAGE=Release $TAG_NAME" >> $GITHUB_ENV
         shell: bash
 
