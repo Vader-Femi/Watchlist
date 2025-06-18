@@ -48,7 +48,7 @@ jobs:
 #          STORE_PASSWORD=${{secrets.STORE_PASSWORD}}
 #          KEY_PASSWORD=${{secrets.KEY_PASSWORD}}
 #          KEY_ALIAS=${{secrets.KEY_ALIAS}}
-#          STORE_FILE=app/upload-keystore.jks
+#          STORE_FILE=../app/upload-keystore.jks
 #          EOF
 #
 #      - name: Create google-services.json
@@ -80,7 +80,7 @@ jobs:
           STORE_PASSWORD=${{secrets.STORE_PASSWORD}}
           KEY_PASSWORD=${{secrets.KEY_PASSWORD}}
           KEY_ALIAS=${{secrets.KEY_ALIAS}}
-          STORE_FILE=app/upload-keystore.jks
+          STORE_FILE=../app/upload-keystore.jks
           EOF
 
       - name: Create google-services.json
