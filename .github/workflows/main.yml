@@ -51,6 +51,10 @@ jobs:
           STORE_FILE=upload-keystore.jks
           EOF
 
+      - name: Create google-services.json
+        run: |
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > app/google-services.json
+
       - name: Run Tests
         run: bash ./gradlew test --stacktrace
 
@@ -78,6 +82,10 @@ jobs:
           KEY_ALIAS:${{ secrets.KEY_ALIAS }}
           STORE_FILE=upload-keystore.jks
           EOF
+
+      - name: Create google-services.json
+        run: |
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > app/google-services.json
 
       # Set Current Date As Env Variable
       - name: Set current date as env variable
