@@ -40,7 +40,7 @@ jobs:
 #          EOF
 #
 #      - name: Decode keystore.jks
-#        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > upload-keystore.jks
+#        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/upload-keystore.jks
 #
 #      - name: Generate keystore.properties
 #        run: |
@@ -48,7 +48,7 @@ jobs:
 #          STORE_PASSWORD=${{secrets.STORE_PASSWORD}}
 #          KEY_PASSWORD=${{secrets.KEY_PASSWORD}}
 #          KEY_ALIAS=${{secrets.KEY_ALIAS}}
-#          STORE_FILE=upload-keystore.jks
+#          STORE_FILE=app/upload-keystore.jks
 #          EOF
 #
 #      - name: Create google-services.json
@@ -72,7 +72,7 @@ jobs:
           EOF
 
       - name: Decode keystore.jks
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > upload-keystore.jks
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/upload-keystore.jks
 
       - name: Generate keystore.properties
         run: |
@@ -80,7 +80,7 @@ jobs:
           STORE_PASSWORD=${{secrets.STORE_PASSWORD}}
           KEY_PASSWORD=${{secrets.KEY_PASSWORD}}
           KEY_ALIAS=${{secrets.KEY_ALIAS}}
-          STORE_FILE=upload-keystore.jks
+          STORE_FILE=app/upload-keystore.jks
           EOF
 
       - name: Create google-services.json
