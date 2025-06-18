@@ -39,14 +39,14 @@ jobs:
           TMDB_API_KEY:"${{secrets.TMDB_API_KEY}}"
           EOF
 
-#      - name: Generate keystore.properties
-#        run: |
-#          cat <<EOF > keystore.properties
-#          storePassword:${{ secrets.STORE_PASSWORD }}
-#          keyPassword:${{ secrets.KEY_PASSWORD }}
-#          keyAlias:${{ secrets.KEY_ALIAS }}
-#          storeFile:${{ secrets.STORE_FILE }}
-#          EOF
+      - name: Generate keystore.properties
+        run: |
+          cat <<EOF > keystore.properties
+          storePassword:${{ secrets.STORE_PASSWORD }}
+          keyPassword:${{ secrets.KEY_PASSWORD }}
+          keyAlias:${{ secrets.KEY_ALIAS }}
+          storeFile:${{ secrets.STORE_FILE }}
+          EOF
 
       - name: Run Tests
         run: bash ./gradlew test --stacktrace
@@ -63,15 +63,15 @@ jobs:
           cat <<EOF > apikey.properties
           TMDB_API_KEY:"${{secrets.TMDB_API_KEY }}"
           EOF
-#
-#      - name: Generate keystore.properties
-#        run: |
-#          cat <<EOF > keystore.properties
-#          storePassword:${{ secrets.STORE_PASSWORD }}
-#          keyPassword:${{ secrets.KEY_PASSWORD }}
-#          keyAlias:${{ secrets.KEY_ALIAS }}
-#          storeFile:${{ secrets.STORE_FILE }}
-#          EOF
+
+      - name: Generate keystore.properties
+        run: |
+          cat <<EOF > keystore.properties
+          storePassword:${{ secrets.STORE_PASSWORD }}
+          keyPassword:${{ secrets.KEY_PASSWORD }}
+          keyAlias:${{ secrets.KEY_ALIAS }}
+          storeFile:${{ secrets.STORE_FILE }}
+          EOF
 
       # Set Current Date As Env Variable
       - name: Set current date as env variable
