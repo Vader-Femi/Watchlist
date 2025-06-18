@@ -12,7 +12,4 @@ class AuthenticationRepositoryImpl @Inject constructor(
     private val dataStore: UserPreferences,
 ) : AuthenticationRepository, BaseRepositoryImpl(firebaseAuth, firestoreReference, dataStore) {
 
-    override suspend fun userFName(fName: String) = dataStore.userFName(fName)
-
-    override suspend fun userLName(lName: String) = dataStore.userLName(lName)
 }

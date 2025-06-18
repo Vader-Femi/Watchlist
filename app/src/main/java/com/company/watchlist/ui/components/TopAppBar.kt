@@ -17,7 +17,7 @@ import com.company.watchlist.navigation.Screen
 @Composable
 fun TopAppBar(
     screen: Screen,
-    backArrow: () -> Unit,
+    backArrow: (() -> Unit)?,
 ) {
 
     TopAppBar(
@@ -31,7 +31,7 @@ fun TopAppBar(
             )
         },
         navigationIcon = {
-            if (screen.name == Screen.MovieDetailsScreen.name || screen.name == Screen.SeriesDetailsScreen.name)
+            if (backArrow != null)
                 IconButton(onClick = backArrow) {
                     Icon(
                         imageVector = Icons.Default.ArrowBack,

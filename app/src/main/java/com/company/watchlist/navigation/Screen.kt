@@ -15,6 +15,7 @@ sealed class Screen(val route: String, var name: String, val smallText: String? 
     data object SeriesDetailsScreen : Screen("series_details_screen", "Series")
     data object MovieDetailsScreen : Screen("movie_details_screen", "Movie")
     data object FavouritesScreen : Screen("favourites_screen", "Favourites", "Your personal watchlist")
+    data object ProfileScreen : Screen("profile_screen", "Profile")
 
     fun withArgs(vararg args: Pair<String, Int>): String {
         return buildString {

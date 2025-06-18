@@ -14,11 +14,13 @@ import com.company.watchlist.presentation.search.movies.SearchMovieState
 import com.company.watchlist.presentation.search.series.SearchSeriesState
 import com.company.watchlist.presentation.trending.TrendingState
 import com.company.watchlist.presentation.favourites.FavouritesState
+import com.company.watchlist.presentation.profile.ProfileState
 import com.company.watchlist.ui.details.MovieDetailsScreen
 import com.company.watchlist.ui.details.SeriesDetailsScreen
 import com.company.watchlist.ui.search.SearchSeriesScreen
 import com.company.watchlist.ui.trending.TrendingScreen
 import com.company.watchlist.ui.favourites.FavouritesScreen
+import com.company.watchlist.ui.profile.ProfileScreen
 import com.company.watchlist.viewmodels.WatchlistViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -30,8 +32,9 @@ fun WatchlistNavigationHost(
     movieDetailsState: MovieDetailsState,
     seriesDetailsState: SeriesDetailsState,
     favouritesState: FavouritesState,
+    profileState: ProfileState,
     viewModel: WatchlistViewModel,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
 
     NavHost(
@@ -43,7 +46,7 @@ fun WatchlistNavigationHost(
         composable(route = Screen.TrendingScreen.route) {
             TrendingScreen(
                 state = trendingState,
-                trendingEvent = {viewModel.onEvent(it)},
+                trendingEvent = { viewModel.onEvent(it) },
                 navigateToMovieDetails = {
                     navController.navigate(
                         Screen.MovieDetailsScreen.withArgs(
@@ -151,7 +154,7 @@ fun WatchlistNavigationHost(
         composable(route = Screen.FavouritesScreen.route) {
             FavouritesScreen(
                 state = favouritesState,
-                onEvent = {viewModel.onEvent(it)},
+                onEvent = { viewModel.onEvent(it) },
                 navigateToMovieDetails = {
                     navController.navigate(
                         Screen.MovieDetailsScreen.withArgs(
@@ -171,10 +174,22 @@ fun WatchlistNavigationHost(
                         popUpTo(Screen.SearchScreen.route)
                         launchSingleTop = true
                     }
-                } )
+                })
             viewModel.onEvent(
                 AppBarEvent.AppbarChanged(
                     Screen.FavouritesScreen
+                )
+            )
+        }
+
+        composable(route = Screen.ProfileScreen.route) {
+            ProfileScreen(
+                state = profileState,
+                onEvent = { viewModel.onEvent(it) }
+            )
+            viewModel.onEvent(
+                AppBarEvent.AppbarChanged(
+                    Screen.ProfileScreen
                 )
             )
         }

@@ -31,9 +31,9 @@ open class BaseViewModel @Inject constructor(
 
     val useDynamicTheme = repository.useDynamicTheme
 
-    fun logOut(){
+    fun logOutFromFirebaseAndDeleteFromPref(){
         viewModelScope.launch {
-            repository.logOut()
+            repository.logOutFromFirebaseAndDeleteFromPref()
         }
     }
 }

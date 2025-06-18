@@ -19,11 +19,11 @@ fun AppBar(
         Screen.FavouritesScreen -> {}
 
         Screen.LogInScreen -> {
-            LargeAppBar(screen = screen, backArrow = backArrow, scrollBehavior = scrollBehavior)
+            LargeAppBar(screen = screen, backArrow = null, scrollBehavior = scrollBehavior)
         }
 
         Screen.MovieDetailsScreen -> {
-            TopAppBar(screen = screen, backArrow = backArrow)
+            TopAppBar(screen = screen, backArrow = null)
         }
 
         Screen.OnBoardingScreen -> {}
@@ -33,19 +33,23 @@ fun AppBar(
         }
 
         Screen.SearchScreen -> {
-            TopAppBar(screen = screen, backArrow = backArrow)
+            TopAppBar(screen = screen, backArrow = null)
         }
 
         Screen.SeriesDetailsScreen -> {
-            TopAppBar(screen = screen, backArrow = backArrow)
+            TopAppBar(screen = screen, backArrow = null)
         }
 
         Screen.SignUpScreen -> {
-            LargeAppBar(screen = screen, backArrow = backArrow, scrollBehavior = scrollBehavior)
+            LargeAppBar(screen = screen, backArrow = null, scrollBehavior = scrollBehavior)
         }
 
         Screen.TrendingScreen -> {
-            LargeAppBar(screen = screen, backArrow = backArrow, scrollBehavior = scrollBehavior)
+            LargeAppBar(screen = screen, backArrow = null, scrollBehavior = scrollBehavior)
+        }
+
+        Screen.ProfileScreen -> {
+            LargeAppBar(screen = screen, backArrow = null, scrollBehavior = scrollBehavior)
         }
 
         Screen.WatchlistRoute -> {}

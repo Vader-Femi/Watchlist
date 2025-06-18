@@ -86,6 +86,7 @@ fun MovieDetailsScreen(
             .fillMaxSize()
             .pullRefresh(pullRefreshState),
     ) {
+
         item {
             Column(
                 verticalArrangement = Arrangement.Center

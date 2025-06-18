@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Delete
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -40,6 +41,7 @@ import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
@@ -94,6 +96,7 @@ fun FavouritesScreen(
 
     val pagerState = rememberPageState()
     val coroutineScope = rememberCoroutineScope()
+
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = state.isLoading,
@@ -279,6 +282,8 @@ fun FilmItem(
     val context = LocalContext.current
     var show by remember { mutableStateOf(true) }
     val currentItem by rememberUpdatedState(film)
+    var showRemoveDialog by remember { mutableStateOf(false) }
+
 
     AnimatedVisibility(
         visible = show,
@@ -360,9 +365,7 @@ fun FilmItem(
                     ) {
 
                         OutlinedButton (
-                            onClick = {
-                                show = false
-                            },
+                            onClick = { showRemoveDialog = true },
                             shape = RoundedCornerShape(16.dp),
                             modifier = Modifier,
                             colors =  ButtonDefaults.outlinedButtonColors()
@@ -392,296 +395,27 @@ fun FilmItem(
         }
     }
 
-    LaunchedEffect(show) {
-        if (!show) {
-            delay(800.milliseconds)
-            onRemove(currentItem)
-            Toast.makeText(context, "${film.name} removed", Toast.LENGTH_SHORT).show()
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DismissBackground(dismissState: DismissState) {
-    val color = when (dismissState.dismissDirection) {
-//        DismissDirection.StartToEnd -> MaterialTheme.colorScheme.surfaceColorAtElevation(5.dp)
-        DismissDirection.EndToStart -> MaterialTheme.colorScheme.errorContainer
-//        null -> Color.Transparent
-        else -> Color.Unspecified
-    }
-    val direction = dismissState.dismissDirection
-
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color)
-            .padding(12.dp, 8.dp),
-    ) {
-//        if (direction == DismissDirection.StartToEnd) {
-//            Text(
-//                text = "View Details",
-//                modifier = Modifier.align(Alignment.CenterStart),
-//            )
-//        }
-        if (direction == DismissDirection.EndToStart) {
-            Icon(
-                Icons.TwoTone.Delete,
-                contentDescription = "Delete",
-                modifier = Modifier.align(Alignment.CenterEnd)
-            )
-        }
-    }
-}
-
-@ExperimentalMaterialApi
-@Composable
-fun OldFavouritesScreen(
-    state: FavouritesState,
-    onEvent: (FavouritesEvent) -> Unit,
-    navigateToMovieDetails: (id: Int) -> Unit,
-    navigateToSeriesDetails: (id: Int) -> Unit,
-) {
-
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = state.isLoading,
-        onRefresh = { onEvent(FavouritesEvent.GetList) }
-    )
-
-    if (state.error != null) {
-        ErrorAlertDialog(state.error, { onEvent(FavouritesEvent.DismissError) }) {
-            onEvent(FavouritesEvent.GetList)
-        }
-    }
-
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp
-    val positionalThreshold by remember { mutableStateOf((screenWidth * 0.8).dp) }
-
-    LazyColumn(
-        modifier = Modifier
-            .padding(10.dp, 0.dp, 10.dp, 0.dp)
-            .fillMaxSize()
-            .pullRefresh(pullRefreshState),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        item(
-            key = "Movies Text"
-        ) {
-            Text(
-                text = "Movies",
-                modifier = Modifier
-                    .padding(10.dp, 8.dp, 10.dp, 8.dp)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Start,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
-
-
-        if (state.favouritesMoviesList.isEmpty()) {
-            item(
-                key = "No favourite movie illustration"
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.empty_amico),
-                        contentScale = ContentScale.Fit,
-                        contentDescription = "No favourite movie illustration"
-                    )
+    if (showRemoveDialog) {
+        AlertDialog(
+            onDismissRequest = { showRemoveDialog = false },
+            title = { Text("Remove from Favourites") },
+            text = { Text("Are you sure you want to remove \"${film.name}\" from your favourites?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showRemoveDialog = false
+                    show = false // triggers the animation and delayed removal
+                }) {
+                    Text("Yes")
                 }
-            }
-        }
-
-        items(
-            items = state.favouritesMoviesList,
-            key = { film -> film.id }
-        ) { film ->
-            OldFilmItem(
-                film = film,
-                positionalThreshold = positionalThreshold,
-                navigateToMovieDetails = navigateToMovieDetails,
-                onRemove = { onEvent(FavouritesEvent.RemoveFromFavourites(film)) }
-            )
-        }
-
-
-        item(
-            key = "Series Text"
-        ) {
-            Text(
-                text = "Series",
-                modifier = Modifier
-                    .padding(10.dp, 8.dp, 10.dp, 8.dp)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Start,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
-
-
-        if (state.favouritesSeriesList.isEmpty()) {
-            item(
-                key = "No favourite series illustration"
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.emptybro),
-                        contentScale = ContentScale.Fit,
-                        contentDescription = "No favourite series illustration"
-                    )
-                }
-            }
-        }
-
-        items(
-            items = state.favouritesSeriesList,
-            key = { film -> film.id }
-        ) { film ->
-            OldFilmItem(
-                film = film,
-                positionalThreshold = positionalThreshold,
-                navigateToSeriesDetails = navigateToSeriesDetails,
-                onRemove = { onEvent(FavouritesEvent.RemoveFromFavourites(film)) }
-            )
-        }
-
-    }
-
-
-    MyPullRefreshIndicator(
-        isLoading = state.isLoading,
-        pullRefreshState = pullRefreshState
-    )
-
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun OldFilmItem(
-    film: Film,
-    positionalThreshold: Dp,
-    navigateToMovieDetails: ((id: Int) -> Unit)? = null,
-    navigateToSeriesDetails: ((id: Int) -> Unit)? = null,
-    onRemove: (Film) -> Unit,
-) {
-
-    val context = LocalContext.current
-    var show by remember { mutableStateOf(true) }
-    val currentItem by rememberUpdatedState(film)
-    val dismissState = rememberDismissState(
-        confirmValueChange = {
-            if (it == DismissValue.DismissedToStart) {
-                show = false
-                true
-            } else {
-                if (it == DismissValue.DismissedToEnd) {
-                    if (film.listType == ListType.FAVOURITESMOVIES)
-                        navigateToMovieDetails?.invoke(film.id.toInt())
-                    else
-                        navigateToSeriesDetails?.invoke(film.id.toInt())
-                }
-                false
-            }
-        }, positionalThreshold = { positionalThreshold.toPx() }
-    )
-
-    AnimatedVisibility(
-        visible = show,
-        exit = fadeOut(spring())
-    ) {
-        SwipeToDismiss(
-            state = dismissState,
-            modifier = Modifier,
-            background = {
-                DismissBackground(dismissState)
             },
-            directions = setOf(DismissDirection.EndToStart),
-            dismissContent = {
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .clickable {
-                            if (film.listType == ListType.FAVOURITESMOVIES)
-                                navigateToMovieDetails?.invoke(film.id.toInt())
-                            else
-                                navigateToSeriesDetails?.invoke(film.id.toInt())
-                        },
-                    shape = RoundedCornerShape(10.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .height(200.dp)
-                            .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-
-                        if (film.posterPath.isNullOrBlank()) {
-                            Image(
-                                painter = painterResource(id = R.drawable.film_rolls_amico),
-                                modifier = Modifier
-                                    .fillMaxWidth(0.4f),
-                                contentScale = ContentScale.Fit,
-                                contentDescription = "${film.name} Poster"
-                            )
-
-                        } else {
-                            AsyncImage(
-                                contentScale = ContentScale.FillHeight,
-                                placeholder = painterResource(id = R.drawable.film_rolls_amico),
-                                fallback = painterResource(id = R.drawable.film_rolls_amico),
-                                model = "https://image.tmdb.org/t/p/w500/${film.posterPath}",
-                                contentDescription = "${film.name} Poster"
-                            )
-                        }
-                        Column(
-                            modifier = Modifier
-                                .padding(10.dp),
-                            verticalArrangement = Arrangement.Center
-                        ) {
-
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 5.dp, bottom = 5.dp),
-                                text = film.name,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.tertiary
-                            )
-
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 10.dp, bottom = 10.dp),
-                                text = "Average Rating: ${
-                                    String.format(
-                                        locale = Locale.getDefault(),
-                                        format = "%.2f",
-                                        film.averageRating
-                                    )
-                                }",
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
+            dismissButton = {
+                TextButton(onClick = { showRemoveDialog = false }) {
+                    Text("Cancel")
                 }
-
             }
         )
     }
+
 
     LaunchedEffect(show) {
         if (!show) {

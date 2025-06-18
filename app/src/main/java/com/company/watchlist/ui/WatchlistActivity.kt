@@ -1,5 +1,6 @@
 package com.company.watchlist.ui
 
+import android.content.Intent
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.widget.Toast
@@ -62,6 +63,7 @@ class WatchlistActivity : ComponentActivity() {
             val movieDetailsState by viewModel.movieDetailState.collectAsStateWithLifecycle()
             val seriesDetailsState by viewModel.seriesDetailState.collectAsStateWithLifecycle()
             val favouritesState by viewModel.favouritesState.collectAsStateWithLifecycle()
+            val profileState by viewModel.profileState.collectAsStateWithLifecycle()
             val watchlistChannelEvents = viewModel.watchlistChannelEvents
 
 
@@ -71,6 +73,16 @@ class WatchlistActivity : ComponentActivity() {
                         is WatchlistEventChannel.AddedToFavourites -> {
                             Toast.makeText(context, event.addedToFavMessage, Toast.LENGTH_SHORT).show()
                         }
+
+                        WatchlistEventChannel.LogUserOut -> {
+                            Toast.makeText(context, "Logged out", Toast.LENGTH_SHORT).show()
+                            Intent(this@WatchlistActivity, AuthenticationActivity::class.java).also {
+                                it.flags =
+                                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                startActivity(it)
+                                finish()
+                            }
+                        }
                     }
                 }
             }
@@ -78,12 +90,13 @@ class WatchlistActivity : ComponentActivity() {
             LaunchedEffect(key1 = true) {
                 delay(5.seconds)
                 val greeting: String = when (Calendar.getInstance().get(Calendar.HOUR_OF_DAY)) {
-                    in 6..11 -> "Good Morning ${viewModel.getUserFName()}"
-                    in 12..16 -> "Good Afternoon ${viewModel.getUserFName()}"
-                    in 17..22 -> "Good Evening ${viewModel.getUserFName()}"
-                    else -> "You should be sleeping ${viewModel.getUserFName()}" }
+                    in 6..11 -> "Good Morning"
+                    in 12..16 -> "Good Afternoon"
+                    in 17..22 -> "Good Evening"
+                    else -> "You should be sleeping" }
 
                 Screen.TrendingScreen.name = greeting
+                Screen.ProfileScreen.name = greeting
 //                Screen.FavouritesScreen.name = greeting
 
 //                val newScreen = appBarState.screen
@@ -167,13 +180,15 @@ class WatchlistActivity : ComponentActivity() {
                                     movieDetailsState = movieDetailsState,
                                     seriesDetailsState = seriesDetailsState,
                                     favouritesState = favouritesState,
+                                    profileState = profileState,
                                     viewModel = viewModel,
                                     navController = navController,
                                 )
                                 AnimatedVisibility(
                                     visible = trendingState.isLoading || movieDetailsState.isLoading ||
                                             seriesDetailsState.isLoading || favouritesState.isLoading ||
-                                            searchMovieState.isLoading || searchSeriesState.isLoading
+                                            searchMovieState.isLoading || searchSeriesState.isLoading ||
+                                            profileState.isLoading
                                 ) {
                                     LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                                 }

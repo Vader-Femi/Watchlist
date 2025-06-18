@@ -20,9 +20,13 @@ open class BaseRepositoryImpl @Inject constructor(
 
     override suspend fun userFName(): String = dataStore.userFName.first()
 
+    override suspend fun userFName(fName: String) = dataStore.userFName(fName)
+
     override suspend fun userLName() = dataStore.userLName.first()
 
-    override suspend fun logOut() {
+    override suspend fun userLName(lName: String) = dataStore.userLName(lName)
+
+    override suspend fun logOutFromFirebaseAndDeleteFromPref() {
         getAuthReference().signOut()
         dataStore.userLName("")
         dataStore.userFName("")

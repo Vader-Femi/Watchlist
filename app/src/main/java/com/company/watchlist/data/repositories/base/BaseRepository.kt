@@ -12,9 +12,13 @@ interface BaseRepository{
 
     fun getFirestoreReference(): FirebaseFirestore
 
+    suspend fun userFName(fName: String)
+
     suspend fun userFName(): String
+
+    suspend fun userLName(lName: String)
 
     suspend fun userLName(): String
 
-    suspend fun logOut()
+    suspend fun logOutFromFirebaseAndDeleteFromPref()
 }

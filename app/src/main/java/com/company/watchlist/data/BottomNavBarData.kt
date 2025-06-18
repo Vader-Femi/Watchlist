@@ -2,7 +2,9 @@ package com.company.watchlist.data
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.twotone.AccountCircle
 import androidx.compose.material.icons.twotone.Favorite
 import androidx.compose.material.icons.twotone.FavoriteBorder
 import androidx.compose.material.icons.twotone.Search
@@ -32,7 +34,14 @@ object BottomNavBarData {
                 route = Screen.FavouritesScreen.route,
                 icon = Icons.TwoTone.FavoriteBorder,
                 selectedIconVariant = Icons.Filled.Favorite
-            ))
+            ),
+            BottomBarItem(
+                name = "Profile",
+                route = Screen.ProfileScreen.route,
+                icon = Icons.Outlined.AccountCircle,
+                selectedIconVariant = Icons.Filled.AccountCircle
+            ),
+        )
     }
 
     @Immutable

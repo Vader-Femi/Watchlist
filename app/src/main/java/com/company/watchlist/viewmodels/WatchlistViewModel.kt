@@ -7,6 +7,8 @@ import com.company.watchlist.data.Film
 import com.company.watchlist.data.FilmConverter
 import com.company.watchlist.data.ListType.FAVOURITESMOVIES
 import com.company.watchlist.data.ListType.FAVOURITESSERIES
+import com.company.watchlist.data.Profile
+import com.company.watchlist.data.Utills
 import com.company.watchlist.data.remote.Resource
 import com.company.watchlist.data.remote.response.search.movie.SearchMovieResult
 import com.company.watchlist.data.remote.response.search.series.SearchSeriesResult
@@ -18,14 +20,18 @@ import com.company.watchlist.presentation.details.series.SeriesDetailsState
 import com.company.watchlist.presentation.favourites.FavouritesEvent
 import com.company.watchlist.presentation.favourites.FavouritesState
 import com.company.watchlist.presentation.WatchlistEventChannel
+import com.company.watchlist.presentation.profile.ProfileEvent
+import com.company.watchlist.presentation.profile.ProfileState
 import com.company.watchlist.presentation.search.movies.SearchMovieEvent
 import com.company.watchlist.presentation.search.movies.SearchMovieState
 import com.company.watchlist.presentation.search.series.SearchSeriesEvent
 import com.company.watchlist.presentation.search.series.SearchSeriesState
 import com.company.watchlist.presentation.trending.TrendingEvent
 import com.company.watchlist.presentation.trending.TrendingState
+import com.company.watchlist.use_case.ValidateName
 import com.company.watchlist.use_case.ValidateSearch
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,6 +45,8 @@ import javax.inject.Inject
 class WatchlistViewModel @Inject constructor(
     private val repository: WatchlistRepositoryImpl,
     private val validateSearch: ValidateSearch,
+    private val validateFirstName: ValidateName,
+    private val validateLastName: ValidateName,
 ) : BaseViewModel(repository) {
 
     var trendingState = MutableStateFlow(TrendingState())
@@ -52,6 +60,8 @@ class WatchlistViewModel @Inject constructor(
     var seriesDetailState = MutableStateFlow(SeriesDetailsState())
         private set
     var favouritesState = MutableStateFlow(FavouritesState())
+        private set
+    var profileState = MutableStateFlow(ProfileState())
         private set
 
     private val watchlistChannel = Channel<WatchlistEventChannel>()
@@ -202,8 +212,222 @@ class WatchlistViewModel @Inject constructor(
 
     }
 
-    suspend fun getUserFName(): String {
-        return repository.userFName()
+    fun onEvent(event: ProfileEvent) {
+        when (event) {
+            is ProfileEvent.FirstNameChanged -> {
+                profileState.update {
+                    it.copy(
+                        profile = Profile(
+                            firstname = event.firstName,
+                            lastname = it.profile.lastname,
+                            email = it.profile.email
+                        )
+                    )
+                }
+            }
+
+            is ProfileEvent.LastNameChanged -> {
+                profileState.update {
+                    it.copy(
+                        profile = Profile(
+                            firstname = it.profile.firstname,
+                            lastname = event.lastName,
+                            email = it.profile.email
+                        )
+                    )
+                }
+            }
+
+            is ProfileEvent.IsEditingProfileChanged -> profileState.update {
+                it.copy(isEditingProfile = event.isEditingProfile)
+            }
+
+            is ProfileEvent.IsLoadingChanged -> profileState.update {
+                it.copy(isLoading = event.isLoading)
+            }
+
+            is ProfileEvent.UpdateNames -> updateNames()
+            ProfileEvent.GetProfile -> getProfile()
+            ProfileEvent.DismissError -> {
+                profileState.update {
+                    it.copy(error = null)
+                }
+            }
+
+            ProfileEvent.LogOut -> {
+                viewModelScope.launch {
+                    logOutFromFirebaseAndDeleteFromPref()
+                    watchlistChannel.send(WatchlistEventChannel.LogUserOut)
+                }
+            }
+
+            ProfileEvent.DeleteAccount -> deleteAccountThenLogOut()
+        }
+
+    }
+
+    private fun updateNames() {
+        val firstName = profileState.value.profile.firstname
+        val lastName = profileState.value.profile.lastname
+
+        val firstNameResult = validateFirstName.execute(firstName)
+        val lastNameResult = validateLastName.execute(firstName)
+
+        val hasError = listOf(
+            firstNameResult,
+            lastNameResult
+        ).any { !it.successful }
+
+        profileState.update {
+            it.copy(
+                firstNameError = firstNameResult.errorMessage,
+            )
+        }
+
+        if (hasError)
+            return
+
+        profileState.update {
+            it.copy(isLoading = true, error = null)
+        }
+
+        viewModelScope.launch {
+            repository.getFirestoreReference()
+                .collection(repository.getAuthReference().uid.toString())
+                .document(Utills.USERDETAILS.toString())
+                .set(
+                    hashMapOf(
+                        Utills.FIRSTNAME.toString() to firstName,
+                        Utills.LASTNAME.toString() to lastName
+                    )
+                )
+                .addOnSuccessListener {
+                    viewModelScope.launch(Dispatchers.IO) {
+                        repository.userFName(firstName)
+                        repository.userLName(lastName)
+                    }
+
+                    profileState.update {
+                        it.copy(isLoading = false, error = null, isEditingProfile = false)
+
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    profileState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = exception.message
+                                ?: "Something went wrong when saving to firestore😪"
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun getProfile() {
+        profileState.update {
+            it.copy(isLoading = true, error = null)
+        }
+
+        viewModelScope.launch {
+            repository.getFirestoreReference()
+                .collection(repository.getAuthReference().uid.toString())
+                .document(Utills.USERDETAILS.toString())
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val firstName = document.getString(Utills.FIRSTNAME.toString()) ?: ""
+                        val lastName = document.getString(Utills.LASTNAME.toString()) ?: ""
+                        profileState.update {
+                            it.copy(
+                                isLoading = false,
+                                error = null,
+                                profile = Profile(
+                                    firstname = firstName, lastname = lastName,
+                                    email = repository.getAuthReference().currentUser?.email ?: " "
+                                )
+                            )
+                        }
+                    } else {
+                        profileState.update {
+                            it.copy(isLoading = false, error = "User details not found.")
+                        }
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    profileState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = exception.message
+                                ?: "Something went wrong when fetching from firestore😪"
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun deleteAccountThenLogOut() {
+        profileState.update {
+            it.copy(isLoading = true, error = null)
+        }
+        viewModelScope.launch {
+            val user = repository.getAuthReference().currentUser
+            if (user != null) {
+                // First, delete Firestore data (profile and favourites)
+                val userDocRef = repository.getFirestoreReference().collection(user.uid)
+                userDocRef.get()
+                    .addOnSuccessListener { querySnapshot ->
+                        val batch = repository.getFirestoreReference().batch()
+                        for (document in querySnapshot.documents) {
+                            batch.delete(document.reference)
+                        }
+                        batch.commit()
+                            .addOnSuccessListener {
+                                // All documents in the user's collection are deleted
+                                // Now delete the user account from Firebase Auth
+                                user.delete().addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        profileState.update {
+                                            it.copy(isLoading = false, error = null)
+                                        }
+
+                                        // Optionally, navigate the user out or show a success message
+                                        viewModelScope.launch {
+                                            watchlistChannel.send(WatchlistEventChannel.LogUserOut)
+                                        }
+                                    } else {
+                                        profileState.update {
+                                            it.copy(
+                                                isLoading = false,
+                                                error = "Failed to delete account: ${task.exception?.message}"
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            .addOnFailureListener { e -> // Failed to delete user's Firestore documents
+                                profileState.update {
+                                    it.copy(
+                                        isLoading = false,
+                                        error = "Failed to delete user data: ${e.message}"
+                                    )
+                                }
+                            }
+                    }
+                    .addOnFailureListener { e -> // Failed to get user's Firestore documents for deletion
+                        profileState.update {
+                            it.copy(
+                                isLoading = false,
+                                error = "Failed to retrieve user data for deletion: ${e.message}"
+                            )
+                        }
+                    }
+            } else {
+                profileState.update {
+                    it.copy(isLoading = false, error = "No user logged in to delete.")
+                }
+            }
+        }
     }
 
     private fun getTrending() {
@@ -430,7 +654,7 @@ class WatchlistViewModel @Inject constructor(
         getFavouriteSeries()
     }
 
-    private fun getFavouriteMovies(){
+    private fun getFavouriteMovies() {
 
         favouritesState.update {
             it.copy(isLoading = true, error = null)
@@ -446,7 +670,7 @@ class WatchlistViewModel @Inject constructor(
                     favouritesState.update {
                         it.copy(
                             favouritesMoviesList =
-                            FilmConverter.dataToListOfFilm(document.data!!).toMutableList(),
+                                FilmConverter.dataToListOfFilm(document.data!!).toMutableList(),
                             isLoading = false,
                             error = null
                         )
@@ -471,7 +695,7 @@ class WatchlistViewModel @Inject constructor(
 
     }
 
-    private fun getFavouriteSeries(){
+    private fun getFavouriteSeries() {
 
         favouritesState.update {
             it.copy(isLoading = true, error = null)
@@ -486,7 +710,7 @@ class WatchlistViewModel @Inject constructor(
                     favouritesState.update {
                         it.copy(
                             favouritesSeriesList =
-                            FilmConverter.dataToListOfFilm(document.data!!).toMutableList(),
+                                FilmConverter.dataToListOfFilm(document.data!!).toMutableList(),
                             isLoading = false,
                             error = null
                         )
@@ -496,7 +720,8 @@ class WatchlistViewModel @Inject constructor(
                         it.copy(
                             favouritesSeriesList = emptyList(),
                             isLoading = false,
-                            error = null)
+                            error = null
+                        )
                     }
                 }
             }.addOnFailureListener { exception ->
@@ -555,7 +780,9 @@ class WatchlistViewModel @Inject constructor(
                         .collection(repository.getAuthReference().uid.toString())
                         .document(FAVOURITESMOVIES.toString())
                         .set(
-                            favouriteMovies.associateBy({ it.name}, { FilmConverter.filmToGson(it) })
+                            favouriteMovies.associateBy(
+                                { it.name },
+                                { FilmConverter.filmToGson(it) })
                         )
                         .addOnSuccessListener {
                             getFavouriteMovies()
@@ -640,7 +867,9 @@ class WatchlistViewModel @Inject constructor(
                         .collection(repository.getAuthReference().uid.toString())
                         .document(FAVOURITESSERIES.toString())
                         .set(
-                            favouriteSeries.associateBy({ it.name}, { FilmConverter.filmToGson(it) })
+                            favouriteSeries.associateBy(
+                                { it.name },
+                                { FilmConverter.filmToGson(it) })
                         )
                         .addOnSuccessListener {
                             getFavouriteSeries()
@@ -706,7 +935,9 @@ class WatchlistViewModel @Inject constructor(
                             .collection(repository.getAuthReference().uid.toString())
                             .document(FAVOURITESMOVIES.toString())
                             .set(
-                                favouriteMovies.associateBy({ it.name}, { FilmConverter.filmToGson(it) })
+                                favouriteMovies.associateBy(
+                                    { it.name },
+                                    { FilmConverter.filmToGson(it) })
                             )
                             .addOnSuccessListener {
                                 getFavouriteMovies()
@@ -735,8 +966,7 @@ class WatchlistViewModel @Inject constructor(
                 }
 
 
-        }
-        else if (film.listType == FAVOURITESSERIES) {
+        } else if (film.listType == FAVOURITESSERIES) {
 
             var favouriteSeries: MutableList<Film>
 
@@ -757,7 +987,9 @@ class WatchlistViewModel @Inject constructor(
                             .collection(repository.getAuthReference().uid.toString())
                             .document(FAVOURITESSERIES.toString())
                             .set(
-                                favouriteSeries.associateBy({ it.name}, { FilmConverter.filmToGson(it) })
+                                favouriteSeries.associateBy(
+                                    { it.name },
+                                    { FilmConverter.filmToGson(it) })
                             )
                             .addOnSuccessListener {
                                 getFavouriteSeries()
