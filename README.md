@@ -1,6 +1,6 @@
 <img src="watchlist.png" alt="Watchlist Image" width="6400" />
 
-<a href="https://appetize.io/app/rz2scysw7s6sytetrycafienu4?device=pixel7&osVersion=13.0&scale=75" target="_blank" rel="nofollow noopener noreferrer"
+<a href="https://appetize.io/app/b_o7lwpntvmwbohd7yhp2wfde45e?device=pixel7&osVersion=13.0&scale=75" target="_blank" rel="nofollow noopener noreferrer"
 aria-label="Live Demo"> <u>Live Demo 🚀</u> </a>
 
 
