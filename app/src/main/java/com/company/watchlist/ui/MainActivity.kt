@@ -3,6 +3,7 @@ package com.company.watchlist.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.company.watchlist.viewmodels.MainActivityViewModel
@@ -17,6 +18,9 @@ class MainActivity : ComponentActivity() {
     lateinit var viewModel: MainActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        enableEdgeToEdge()
+
         super.onCreate(savedInstanceState)
 
             lifecycleScope.launch {

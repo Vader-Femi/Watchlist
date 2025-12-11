@@ -30,7 +30,7 @@ Watchlist is an Android application that leverages TMDB API, to offer access to 
 
 ---
 
-## Technologies Used
+## Technologies
 
 * Jetpack Compose
 * TMDB API
