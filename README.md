@@ -1,7 +1,3 @@
-Here’s a **clean, consistent, and GitHub-ready README Markdown** version of your content, with improved spacing, headings, and readability (while keeping your tone and content intact):
-
----
-
 <p align="center">
   <img src="watchlist.png" alt="Watchlist App Preview" width="640" />
 </p>
